@@ -1,0 +1,65 @@
+Bitim Tarihi 01/08/2024
+
+
+FIRST PROJECTn
+
+
+API projesi User Management .NET 8
+
+EF Core => MsSql 
+
+RabbitMQ / Masstransit
+
+
+Api projesinde açtýðýnýz endpointler için postman tarafýnda request hazýrlayýp, bir collection içerisine kaydedin
+(bize uygulamanýzý gösterirken rahat edersiniz).
+
+
+Servis uçlarýnda;
+
+üye güncelleme, ekleme, silme iþlemleri
+
+sistem bulunan aktif üye sayýsý getirme
+
+Belirli tarih aralýðýnda eklenen kullanýcýlarý getirme
+
+
+Yapýlmasý gerekmektedir. Herhangi bir üye üzerinde deðiþiklik olduðunda veya yeni bir üye eklendiði zaman; 
+ilgili üyenin bilgileri, rabbitmq aracýlýðý ile worker service projesine gönderilmelidir.
+
+
+Worker Service .NET
+
+Gelen üye bilgilerini alýp sadece console.writeline ile ekrana yazdýrmanýz yeterlidir.
+
+
+ARAÞTIRMANIZ GEREKENLER
+
+Katmanlý Mimari Nedir? Proje yapýsý nasýl olmalý?
+
+EntityFrameWork ile MsSql kullanýmý Best Practices
+
+Opsiyonel olarak generic repository pattern kullanabilirsiniz.
+
+Eðer kullanacaksanýz generic durumunu iyi öðrenin
+
+Dependency Injection Nedir?
+
+Worker Service Nedir? Bir Worker Service projesi nasýl oluþturulur?
+
+RabbitMQ nedir? Ne amaca hizmet eder?
+
+Publisher Consumer vs. gibi kavramlarýn ne iþe yaradýðýný bilin
+
+Command ve event arasýnda ki farký bilin
+
+Masstransit ne iþe yarar? Olmasa ne olur?
+
+
+
+DÝPNOT:
+
+ UI oluþturmayýn!
+
+Yazdýðýnýz kodlarý GitHub’a publish edin! Yararýnýza olacaktýr:) Visual Studio üzerinden git iþlemleri basit bir þekilde 
+handle edilebiliyor, kendi hesabýnýzý baðlayarak projenizi yayýnlayýn ve sürekli commit atýn
