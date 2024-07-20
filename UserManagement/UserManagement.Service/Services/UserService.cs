@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 using UserManagement.Core.DTOs;
 using UserManagement.Core.Entities;
 using UserManagement.Core.Interfaces;
@@ -11,12 +12,14 @@ namespace UserManagement.Service.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IPublishEndpoint publishEndpoint)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IPublishEndpoint publishEndpoint, ILogger<UserService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _publishEndpoint = publishEndpoint;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
@@ -34,16 +37,16 @@ namespace UserManagement.Service.Services
         public async Task<UserDTO> AddUserAsync(UserDTO userDto)
         {
             var user = _mapper.Map<User>(userDto);
-            user.DateAdded = DateTime.UtcNow; // DateAdded alanını otomatik olarak ayarla
-
+            user.DateAdded = DateTime.UtcNow;
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.CommitAsync();
 
-            await _publishEndpoint.Publish(user);
+            _logger.LogInformation("User created: {User}", user);
+
+            await _publishEndpoint.Publish(user); // RabbitMQ mesajını yayınlama
 
             return _mapper.Map<UserDTO>(user);
         }
-
 
         public async Task UpdateUserAsync(UserDTO userDto)
         {
