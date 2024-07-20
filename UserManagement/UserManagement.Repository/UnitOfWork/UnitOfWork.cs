@@ -1,12 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using UserManagement.Core.Interfaces;
+using UserManagement.Repository.Data;
+using UserManagement.Repository.Repositories;
 
 namespace UserManagement.Repository.UnitOfWork
 {
-    internal class UnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
+        private readonly UserManagementDbContext _context;
+        private UserRepository? _userRepository; // Nullable olarak işaretleyin
+
+        public UnitOfWork(UserManagementDbContext context)
+        {
+            _context = context;
+        }
+
+        public IUserRepository Users => _userRepository ??= new UserRepository(_context);
+
+        public async Task<int> CommitAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
     }
 }

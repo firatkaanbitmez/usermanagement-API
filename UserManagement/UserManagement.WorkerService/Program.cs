@@ -1,7 +1,24 @@
+using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using UserManagement.WorkerService;
+using UserManagement.WorkerService.MessagingConfiguration;
 
-var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices((context, services) =>
+    {
+        // RabbitMQ ve MassTransit konfigürasyonu
+        services.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host("rabbitmq://localhost");
+            });
+        });
 
-var host = builder.Build();
-host.Run();
+        // Worker servisini ekle
+        services.AddHostedService<Worker>();
+    })
+    .Build();
+
+await host.RunAsync();
