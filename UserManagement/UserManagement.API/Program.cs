@@ -1,5 +1,6 @@
 using UserManagement.Repository;
 using UserManagement.Service;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +9,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Baðýmlýlýk enjeksiyonlarýný ekle
+// Add dependency injection
 builder.Services.AddRepositories(builder.Configuration.GetConnectionString("DefaultConnection"));
 builder.Services.AddServices();
+
+// RabbitMQ and MassTransit configuration
+var rabbitMqSettings = builder.Configuration.GetSection("RabbitMQ");
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(rabbitMqSettings["Host"], rabbitMqSettings["VirtualHost"], h =>
+        {
+            h.Username(rabbitMqSettings["Username"]);
+            h.Password(rabbitMqSettings["Password"]);
+        });
+    });
+});
 
 var app = builder.Build();
 
@@ -21,7 +36,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Comment out the HTTPS redirection middleware
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

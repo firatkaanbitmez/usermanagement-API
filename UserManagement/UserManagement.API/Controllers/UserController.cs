@@ -35,9 +35,10 @@ namespace UserManagement.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUser([FromBody] UserDTO userDto)
         {
-            await _userService.AddUserAsync(userDto);
-            return CreatedAtAction(nameof(GetUser), new { id = userDto.Id }, userDto);
+            var createdUser = await _userService.AddUserAsync(userDto);
+            return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDTO userDto)

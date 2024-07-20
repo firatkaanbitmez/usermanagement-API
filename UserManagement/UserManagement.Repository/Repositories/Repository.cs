@@ -14,7 +14,7 @@ namespace UserManagement.Repository.Repositories
             _context = context;
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(int id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
@@ -37,11 +37,13 @@ namespace UserManagement.Repository.Repositories
         public async Task UpdateAsync(T entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
+            await Task.CompletedTask;
         }
 
         public async Task DeleteAsync(T entity)
         {
             _context.Set<T>().Remove(entity);
+            await Task.CompletedTask;
         }
     }
 }

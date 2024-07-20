@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using AutoMapper;
 using UserManagement.Service.Services;
 using UserManagement.Service.MappingProfiles;
 
@@ -9,8 +8,7 @@ namespace UserManagement.Service
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            // AutoMapper'ı aşağıdaki gibi ekleyin
-            services.AddAutoMapper(typeof(UserProfile).Assembly);
+            services.AddAutoMapper(typeof(UserProfile));
 
             services.AddScoped<UserService>();
 

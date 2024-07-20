@@ -1,0 +1,2 @@
+Add-Migration InitialCreate -Project UserManagement.Repository -StartupProject UserManagement.API
+Update-Database -Project UserManagement.Repository -StartupProject UserManagement.API

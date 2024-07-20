@@ -8,13 +8,7 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
         // RabbitMQ ve MassTransit konfigürasyonu
-        services.AddMassTransit(x =>
-        {
-            x.UsingRabbitMq((context, cfg) =>
-            {
-                cfg.Host("rabbitmq://localhost");
-            });
-        });
+        services.ConfigureBus(context.Configuration);
 
         // Worker servisini ekle
         services.AddHostedService<Worker>();

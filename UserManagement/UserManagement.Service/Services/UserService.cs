@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MassTransit;
 using UserManagement.Core.DTOs;
 using UserManagement.Core.Entities;
 using UserManagement.Core.Interfaces;
@@ -9,11 +10,13 @@ namespace UserManagement.Service.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IPublishEndpoint publishEndpoint)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
@@ -28,18 +31,27 @@ namespace UserManagement.Service.Services
             return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task AddUserAsync(UserDTO userDto)
+        public async Task<UserDTO> AddUserAsync(UserDTO userDto)
         {
             var user = _mapper.Map<User>(userDto);
+            user.DateAdded = DateTime.UtcNow; // DateAdded alanını otomatik olarak ayarla
+
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.CommitAsync();
+
+            await _publishEndpoint.Publish(user);
+
+            return _mapper.Map<UserDTO>(user);
         }
+
 
         public async Task UpdateUserAsync(UserDTO userDto)
         {
             var user = _mapper.Map<User>(userDto);
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
+
+            await _publishEndpoint.Publish(user);
         }
 
         public async Task DeleteUserAsync(int id)
@@ -49,6 +61,8 @@ namespace UserManagement.Service.Services
             {
                 await _unitOfWork.Users.DeleteAsync(user);
                 await _unitOfWork.CommitAsync();
+
+                await _publishEndpoint.Publish(user);
             }
         }
 
