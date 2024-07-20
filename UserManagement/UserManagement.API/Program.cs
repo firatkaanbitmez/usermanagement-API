@@ -9,20 +9,26 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add dependency injection
-builder.Services.AddRepositories(builder.Configuration.GetConnectionString("DefaultConnection"));
+// Baðýmlýlýk enjeksiyonlarýný ekle
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string not found.");
+builder.Services.AddRepositories(connectionString);
 builder.Services.AddServices();
 
-// RabbitMQ and MassTransit configuration
+// RabbitMQ ve MassTransit konfigürasyonu
 var rabbitMqSettings = builder.Configuration.GetSection("RabbitMQ");
+var host = rabbitMqSettings["Host"] ?? throw new ArgumentNullException("RabbitMQ Host not found.");
+var virtualHost = rabbitMqSettings["VirtualHost"] ?? throw new ArgumentNullException("RabbitMQ VirtualHost not found.");
+var username = rabbitMqSettings["Username"] ?? throw new ArgumentNullException("RabbitMQ Username not found.");
+var password = rabbitMqSettings["Password"] ?? throw new ArgumentNullException("RabbitMQ Password not found.");
+
 builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host(rabbitMqSettings["Host"], rabbitMqSettings["VirtualHost"], h =>
+        cfg.Host(host, virtualHost, h =>
         {
-            h.Username(rabbitMqSettings["Username"]);
-            h.Password(rabbitMqSettings["Password"]);
+            h.Username(username);
+            h.Password(password);
         });
     });
 });
@@ -36,8 +42,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Comment out the HTTPS redirection middleware
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
