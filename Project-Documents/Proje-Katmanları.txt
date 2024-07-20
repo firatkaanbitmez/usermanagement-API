@@ -1,0 +1,45 @@
+UserManagement
+│
+├── UserManagement.API          # API Katmanı
+│   ├── Controllers             # Kontrolörler
+│   ├── Filters                 # Hata yönetimi ve yetkilendirme için filtreler
+│   ├── Middleware              # Ara Katmanlar
+│   ├── appsettings.json        # Yapılandırma Dosyaları  
+│   └── Program.cs              # Uygulama Başlangıç Ayarları /Uygulama Giriş Noktası
+│
+├── UserManagement.Core         # Çekirdek/Uygulama Katmanı
+│   ├── DTOs                    # DTO'lar dış dünyaya sunulan veri modelleri
+│   ├── Entities                # Veritabanı tabloları (eskiden Model)
+│   ├── Interfaces              # Arayüzler
+│   │   └── IUnitOfWork.cs      # UnitOfWork Interface'i
+│   ├── Services                # Servisler
+│   └── Mappings                # Nesne Dönüştürme Ayarları
+│
+├── UserManagement.Repository   # Repository Katmanı
+│   ├── Data                    # Veritabanı Bağlamı
+│   ├── Configurations          # Entity Yapılandırmaları
+│   ├── Migrations              # Veritabanı Göçleri
+│   ├── Repositories            # Veri Erişim Sınıfları
+│   │   ├── UserRepository.cs   # Kullanıcı Repository'si
+│   │   └── OtherRepository.cs  # Diğer Repository'ler
+│   ├── UnitOfWork              # Birim Çalışma Implementasyonları
+│   │   └── UnitOfWork.cs       # UnitOfWork Implementasyonu
+│   └── DependencyInjection.cs  # Bağımlılık Enjeksiyonu
+│
+├── UserManagement.Service      # Servis Katmanı
+│   ├── Authorization           # Yetkilendirme
+│   ├── Exceptions              # İstisnalar
+│   ├── Helpers                 # Yardımcı Sınıflar
+│   ├── Services                # İş Mantığı Servisleri
+│   ├── Messaging               # RabbitMQ ve MassTransit Yapılandırmaları ve İşleyicileri
+│   │   ├── Publishers          # Mesaj Göndericiler
+│   │   └── Consumers           # Mesaj Tüketiciler
+│   ├── MappingProfiles         # AutoMapper Profilleri
+│   └── DependencyInjection.cs  # Bağımlılık Enjeksiyonu
+│
+├── UserManagement.WorkerService # Worker Servis Katmanı
+│   ├── Program.cs              # Worker Servis Giriş Noktası
+│   ├── Worker.cs               # İşleyici Sınıfı
+│   └── MessagingConfiguration  # RabbitMQ ve MassTransit Yapılandırmaları
+│
+└── UserManagement.sln          # Çözüm Dosyası

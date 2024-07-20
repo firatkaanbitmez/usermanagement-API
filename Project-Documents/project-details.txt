@@ -57,6 +57,15 @@ Masstransit ne iþe yarar? Olmasa ne olur?
 
 
 
+
+
+ORM (Object-Relational Mapping)
+LINQ (Language Integrated Query)
+
+
+
+
+
 DÝPNOT:
 
  UI oluþturmayýn!
