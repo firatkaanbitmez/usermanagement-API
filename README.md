@@ -35,37 +35,7 @@ Bu proje, .NET 8, EF Core ve RabbitMQ/MassTransit kullanarak oluşturulmuş bir 
 
 ## Proje Yapısı
 
-UserManagement
-├── UserManagement.API # API Katmanı
-│ ├── Controllers # Kontrolörler
-│ ├── Filters # Filtreler (hata yönetimi ve yetkilendirme)
-│ ├── Middleware # Ara Katmanlar
-│ ├── appsettings.json # Yapılandırma Dosyaları
-│ └── Program.cs # Uygulama Başlangıç Ayarları
-├── UserManagement.Core # Çekirdek/Uygulama Katmanı
-│ ├── DTOs # Data Transfer Object'ler
-│ ├── Entities # Veritabanı Varlıkları
-│ ├── Interfaces # Arayüzler
-│ ├── Services # Servis Arayüzleri
-│ └── Mappings # Nesne Dönüştürme Ayarları
-├── UserManagement.Repository # Repository Katmanı
-│ ├── Data # Veritabanı Bağlamı
-│ ├── Configurations # Varlık Yapılandırmaları
-│ ├── Migrations # Veritabanı Göçleri
-│ ├── Repositories # Veri Erişim Sınıfları
-│ ├── UnitOfWork # Birim Çalışma Implementasyonları
-│ └── DependencyInjection.cs # Bağımlılık Enjeksiyonu
-├── UserManagement.Service # Servis Katmanı
-│ ├── Services # İş Mantığı Servisleri
-│ ├── Messaging # RabbitMQ ve MassTransit yapılandırmaları ve işleyicileri
-│ ├── MappingProfiles # AutoMapper Profilleri
-│ └── DependencyInjection.cs # Bağımlılık Enjeksiyonu
-└── UserManagement.WorkerService # Worker Servis Katmanı
-├── Program.cs # Worker Servis Giriş Noktası
-├── Worker.cs # İşleyici Sınıfı
-├── Consumers # RabbitMQ Tüketicileri
-└── MessagingConfiguration # RabbitMQ ve MassTransit Yapılandırmaları
-
+![Proje Yapısı](https://raw.githubusercontent.com/firatkaanbitmez/usermanagement-API/main/Project-Documents/20.07-katmanyapisi.png)
 
 ## Endpointler
 
