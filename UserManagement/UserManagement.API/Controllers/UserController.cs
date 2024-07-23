@@ -55,7 +55,7 @@ namespace UserManagement.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("count")]
+        [HttpGet("active-user-count")]
         public async Task<IActionResult> GetActiveUserCount()
         {
             var count = await _userService.GetActiveUserCountAsync();
