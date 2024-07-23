@@ -3,12 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UserManagement.Core.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         [Required]
         public string? Name { get; set; }
 
@@ -16,5 +12,6 @@ namespace UserManagement.Core.Entities
         public string? Email { get; set; }
 
         public DateTime DateAdded { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -9,8 +9,9 @@ namespace UserManagement.Core.DTOs
     public class UserDTO
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty; // Varsayılan değer atama
-        public string Email { get; set; } = string.Empty; // Varsayılan değer atama
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public DateTime DateAdded { get; set; }
+        public bool IsActive { get; set; } = true; // Varsayılan olarak aktif
     }
 }

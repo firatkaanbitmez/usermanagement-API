@@ -39,7 +39,6 @@ namespace UserManagement.API.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
         }
 
-
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDTO userDto)
         {
@@ -69,5 +68,21 @@ namespace UserManagement.API.Controllers
             var users = await _userService.GetUsersAddedBetweenDatesAsync(startDate, endDate);
             return Ok(users);
         }
+
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveUsers()
+        {
+            var users = await _userService.GetActiveUsersAsync();
+            return Ok(users);
+        }
+
+        [HttpGet("inactive")]
+        public async Task<IActionResult> GetInactiveUsers()
+        {
+            var users = await _userService.GetInactiveUsersAsync();
+            return Ok(users);
+        }
     }
+
+
 }

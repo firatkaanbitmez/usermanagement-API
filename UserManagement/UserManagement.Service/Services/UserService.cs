@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using UserManagement.Core.DTOs;
@@ -51,6 +54,7 @@ namespace UserManagement.Service.Services
         public async Task UpdateUserAsync(UserDTO userDto)
         {
             var user = _mapper.Map<User>(userDto);
+            user.UpdatedAt = DateTime.UtcNow;
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
 
@@ -79,5 +83,19 @@ namespace UserManagement.Service.Services
         {
             return await _unitOfWork.Users.GetActiveUserCountAsync();
         }
+
+        public async Task<IEnumerable<UserDTO>> GetActiveUsersAsync()
+        {
+            var users = await _unitOfWork.Users.GetActiveUsersAsync();
+            return _mapper.Map<IEnumerable<UserDTO>>(users);
+        }
+
+        public async Task<IEnumerable<UserDTO>> GetInactiveUsersAsync()
+        {
+            var users = await _unitOfWork.Users.GetInactiveUsersAsync();
+            return _mapper.Map<IEnumerable<UserDTO>>(users);
+        }
     }
+
+
 }

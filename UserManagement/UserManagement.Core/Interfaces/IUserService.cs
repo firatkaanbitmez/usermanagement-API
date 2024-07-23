@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UserManagement.Core.DTOs;
 
@@ -16,5 +14,7 @@ namespace UserManagement.Core.Interfaces
         Task DeleteUserAsync(int id);
         Task<IEnumerable<UserDTO>> GetUsersAddedBetweenDatesAsync(DateTime startDate, DateTime endDate);
         Task<int> GetActiveUserCountAsync();
+        Task<IEnumerable<UserDTO>> GetActiveUsersAsync();
+        Task<IEnumerable<UserDTO>> GetInactiveUsersAsync();
     }
 }

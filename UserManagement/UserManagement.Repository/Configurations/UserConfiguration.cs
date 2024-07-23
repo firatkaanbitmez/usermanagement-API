@@ -12,6 +12,8 @@ namespace UserManagement.Repository.Configurations
             builder.Property(u => u.Id).ValueGeneratedOnAdd();
             builder.Property(u => u.Name).IsRequired().HasMaxLength(100);
             builder.Property(u => u.Email).IsRequired().HasMaxLength(100);
+            builder.Property(u => u.IsActive).IsRequired();
         }
     }
+
 }
