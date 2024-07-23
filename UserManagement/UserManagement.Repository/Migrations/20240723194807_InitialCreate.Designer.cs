@@ -12,7 +12,7 @@ using UserManagement.Repository.Data;
 namespace UserManagement.Repository.Migrations
 {
     [DbContext(typeof(UserManagementDbContext))]
-    [Migration("20240723114136_InitialCreate")]
+    [Migration("20240723194807_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -39,9 +39,6 @@ namespace UserManagement.Repository.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")

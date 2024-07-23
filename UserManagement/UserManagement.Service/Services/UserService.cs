@@ -58,7 +58,8 @@ namespace UserManagement.Service.Services
             try
             {
                 var user = _mapper.Map<User>(userDto);
-                user.DateAdded = DateTime.UtcNow;
+                user.CreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
                 await _unitOfWork.Users.AddAsync(user);
                 await _unitOfWork.CommitAsync();
 
@@ -168,5 +169,4 @@ namespace UserManagement.Service.Services
             }
         }
     }
-
 }
