@@ -96,6 +96,4 @@ namespace UserManagement.Service.Services
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
     }
-
-
 }

@@ -16,7 +16,7 @@ namespace UserManagement.WorkerService.Consumers
         public Task Consume(ConsumeContext<User> context)
         {
             var user = context.Message;
-            _logger.LogInformation($"Received User: {user.Name}, Email: {user.Email}, Date Added: {user.DateAdded}");
+            _logger.LogInformation($"Received User: {user.FirstName} {user.LastName}, Email: {user.Email}, Date Added: {user.DateAdded}, Active: {user.IsActive}");
             return Task.CompletedTask;
         }
     }

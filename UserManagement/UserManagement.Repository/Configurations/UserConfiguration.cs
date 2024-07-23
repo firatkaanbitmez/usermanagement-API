@@ -10,10 +10,12 @@ namespace UserManagement.Repository.Configurations
         {
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Id).ValueGeneratedOnAdd();
-            builder.Property(u => u.Name).IsRequired().HasMaxLength(100);
+            builder.Property(u => u.FirstName).IsRequired().HasMaxLength(100);
+            builder.Property(u => u.LastName).IsRequired().HasMaxLength(100);
             builder.Property(u => u.Email).IsRequired().HasMaxLength(100);
             builder.Property(u => u.IsActive).IsRequired();
+            builder.Property(u => u.PhoneNumber).HasMaxLength(15);
+            builder.Property(u => u.Address).HasMaxLength(200);
         }
     }
-
 }

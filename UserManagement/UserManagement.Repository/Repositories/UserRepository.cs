@@ -34,5 +34,4 @@ namespace UserManagement.Repository.Repositories
             return await _dbSet.Where(u => !u.IsActive).ToListAsync();
         }
     }
-
 }
