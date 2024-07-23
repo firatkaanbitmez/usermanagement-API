@@ -59,6 +59,7 @@ namespace UserManagement.Service.Services
             {
                 var user = _mapper.Map<User>(userDto);
                 user.DateAdded = DateTime.UtcNow;
+                user.CreatedAt = DateTime.UtcNow;
                 await _unitOfWork.Users.AddAsync(user);
                 await _unitOfWork.CommitAsync();
 
@@ -80,7 +81,16 @@ namespace UserManagement.Service.Services
             try
             {
                 var user = _mapper.Map<User>(userDto);
+                var existingUser = await _unitOfWork.Users.GetByIdAsync(user.Id);
+
+                if (existingUser == null)
+                {
+                    throw new Exception("User not found");
+                }
+
+                user.DateAdded = existingUser.DateAdded; // DateAdded bilgisini koru
                 user.UpdatedAt = DateTime.UtcNow;
+
                 await _unitOfWork.Users.UpdateAsync(user);
                 await _unitOfWork.CommitAsync();
 
@@ -168,5 +178,4 @@ namespace UserManagement.Service.Services
             }
         }
     }
-
 }

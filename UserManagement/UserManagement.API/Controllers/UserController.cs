@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using UserManagement.Core.DTOs;
 using UserManagement.Service.Services;
 using Microsoft.Extensions.Logging;
+using UserManagement.Core.Interfaces;
 
 namespace UserManagement.API.Controllers
 {
@@ -10,10 +11,10 @@ namespace UserManagement.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
 
-        public UserController(UserService userService, ILogger<UserController> logger)
+        public UserController(IUserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
             _logger = logger;

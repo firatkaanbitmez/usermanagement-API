@@ -17,8 +17,8 @@ namespace UserManagement.Repository.Configurations
             builder.Property(u => u.PhoneNumber).HasMaxLength(15);
             builder.Property(u => u.Address).HasMaxLength(200);
             builder.Property(u => u.DateAdded).IsRequired().HasColumnType("datetime2");
+            builder.Property(u => u.CreatedAt).IsRequired().HasColumnType("datetime2");
             builder.Property(u => u.UpdatedAt).IsRequired().HasColumnType("datetime2");
         }
     }
-
 }

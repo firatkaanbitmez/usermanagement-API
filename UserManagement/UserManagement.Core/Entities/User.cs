@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace UserManagement.Core.Entities
 {
@@ -17,7 +17,7 @@ namespace UserManagement.Core.Entities
         [Required]
         public bool IsActive { get; set; }
 
-        public DateTime DateAdded { get; set; }
+        public new DateTime DateAdded { get; set; } = DateTime.UtcNow;
 
         public string PhoneNumber { get; set; } = string.Empty;
 

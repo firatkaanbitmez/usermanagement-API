@@ -12,7 +12,7 @@ using UserManagement.Repository.Data;
 namespace UserManagement.Repository.Migrations
 {
     [DbContext(typeof(UserManagementDbContext))]
-    [Migration("20240723114136_InitialCreate")]
+    [Migration("20240723132610_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
