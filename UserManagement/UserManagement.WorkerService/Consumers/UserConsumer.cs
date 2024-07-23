@@ -20,4 +20,5 @@ namespace UserManagement.WorkerService.Consumers
             return Task.CompletedTask;
         }
     }
+
 }

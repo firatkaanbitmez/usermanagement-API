@@ -7,7 +7,7 @@ namespace UserManagement.Repository.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly UserManagementDbContext _context;
-        private UserRepository? _userRepository; // Nullable olarak işaretleyin
+        private UserRepository? _userRepository;
 
         public UnitOfWork(UserManagementDbContext context)
         {
@@ -26,4 +26,5 @@ namespace UserManagement.Repository.UnitOfWork
             _context.Dispose();
         }
     }
+
 }

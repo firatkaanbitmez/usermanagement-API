@@ -27,73 +27,146 @@ namespace UserManagement.Service.Services
 
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
-            var users = await _unitOfWork.Users.GetAllAsync();
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            try
+            {
+                var users = await _unitOfWork.Users.GetAllAsync();
+                return _mapper.Map<IEnumerable<UserDTO>>(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching all users.");
+                throw;
+            }
         }
 
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(id);
-            return _mapper.Map<UserDTO>(user);
+            try
+            {
+                var user = await _unitOfWork.Users.GetByIdAsync(id);
+                return _mapper.Map<UserDTO>(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching user with id {Id}", id);
+                throw;
+            }
         }
 
         public async Task<UserDTO> AddUserAsync(UserDTO userDto)
         {
-            var user = _mapper.Map<User>(userDto);
-            user.DateAdded = DateTime.UtcNow;
-            await _unitOfWork.Users.AddAsync(user);
-            await _unitOfWork.CommitAsync();
+            try
+            {
+                var user = _mapper.Map<User>(userDto);
+                user.DateAdded = DateTime.UtcNow;
+                await _unitOfWork.Users.AddAsync(user);
+                await _unitOfWork.CommitAsync();
 
-            _logger.LogInformation("User created: {User}", user);
+                _logger.LogInformation("User created: {User}", user);
 
-            await _publishEndpoint.Publish(user); // RabbitMQ mesajını yayınlama
+                await _publishEndpoint.Publish(user);
 
-            return _mapper.Map<UserDTO>(user);
+                return _mapper.Map<UserDTO>(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while adding user.");
+                throw;
+            }
         }
 
         public async Task UpdateUserAsync(UserDTO userDto)
         {
-            var user = _mapper.Map<User>(userDto);
-            user.UpdatedAt = DateTime.UtcNow;
-            await _unitOfWork.Users.UpdateAsync(user);
-            await _unitOfWork.CommitAsync();
+            try
+            {
+                var user = _mapper.Map<User>(userDto);
+                user.UpdatedAt = DateTime.UtcNow;
+                await _unitOfWork.Users.UpdateAsync(user);
+                await _unitOfWork.CommitAsync();
 
-            await _publishEndpoint.Publish(user);
+                await _publishEndpoint.Publish(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating user.");
+                throw;
+            }
         }
 
         public async Task DeleteUserAsync(int id)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(id);
-            if (user != null)
+            try
             {
-                await _unitOfWork.Users.DeleteAsync(user);
-                await _unitOfWork.CommitAsync();
+                var user = await _unitOfWork.Users.GetByIdAsync(id);
+                if (user != null)
+                {
+                    await _unitOfWork.Users.DeleteAsync(user);
+                    await _unitOfWork.CommitAsync();
 
-                await _publishEndpoint.Publish(user);
+                    await _publishEndpoint.Publish(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting user.");
+                throw;
             }
         }
 
         public async Task<IEnumerable<UserDTO>> GetUsersAddedBetweenDatesAsync(DateTime startDate, DateTime endDate)
         {
-            var users = await _unitOfWork.Users.GetUsersAddedBetweenDatesAsync(startDate, endDate);
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            try
+            {
+                var users = await _unitOfWork.Users.GetUsersAddedBetweenDatesAsync(startDate, endDate);
+                return _mapper.Map<IEnumerable<UserDTO>>(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching users between dates {StartDate} and {EndDate}", startDate, endDate);
+                throw;
+            }
         }
 
         public async Task<int> GetActiveUserCountAsync()
         {
-            return await _unitOfWork.Users.GetActiveUserCountAsync();
+            try
+            {
+                return await _unitOfWork.Users.GetActiveUserCountAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching active user count.");
+                throw;
+            }
         }
 
         public async Task<IEnumerable<UserDTO>> GetActiveUsersAsync()
         {
-            var users = await _unitOfWork.Users.GetActiveUsersAsync();
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            try
+            {
+                var users = await _unitOfWork.Users.GetActiveUsersAsync();
+                return _mapper.Map<IEnumerable<UserDTO>>(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching active users.");
+                throw;
+            }
         }
 
         public async Task<IEnumerable<UserDTO>> GetInactiveUsersAsync()
         {
-            var users = await _unitOfWork.Users.GetInactiveUsersAsync();
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            try
+            {
+                var users = await _unitOfWork.Users.GetInactiveUsersAsync();
+                return _mapper.Map<IEnumerable<UserDTO>>(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching inactive users.");
+                throw;
+            }
         }
     }
+
 }
