@@ -5,46 +5,43 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace UserManagement.API.Middlewares
+public class GlobalExceptionHandler
 {
-    public class GlobalExceptionHandler
+    private readonly RequestDelegate _next;
+    private readonly ILogger<GlobalExceptionHandler> _logger;
+
+    public GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptionHandler> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<GlobalExceptionHandler> _logger;
+        _next = next;
+        _logger = logger;
+    }
 
-        public GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptionHandler> logger)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
         {
-            _next = next;
-            _logger = logger;
+            await _next(context);
         }
-
-        public async Task InvokeAsync(HttpContext context)
+        catch (Exception ex)
         {
-            try
-            {
-                await _next(context);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Something went wrong: {ex}");
-                await HandleExceptionAsync(context, ex);
-            }
+            _logger.LogError($"Something went wrong: {ex}");
+            await HandleExceptionAsync(context, ex);
         }
+    }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+        var response = new
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            StatusCode = context.Response.StatusCode,
+            Message = "Internal Server Error. Please try again later.",
+            Detailed = exception.Message // Detaylı hata mesajı ekliyoruz
+        };
 
-            var response = new
-            {
-                StatusCode = context.Response.StatusCode,
-                Message = "Internal Server Error. Please try again later.",
-                Detailed = exception.Message // Detaylı hata mesajı ekliyoruz
-            };
-
-            var jsonResponse = JsonSerializer.Serialize(response);
-            return context.Response.WriteAsync(jsonResponse);
-        }
+        var jsonResponse = JsonSerializer.Serialize(response);
+        return context.Response.WriteAsync(jsonResponse);
     }
 }

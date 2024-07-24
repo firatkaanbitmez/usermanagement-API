@@ -15,5 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\UserManagement.Core\UserManagement.Core.csproj" />
+    <ProjectReference Include="..\UserManagement.Service\UserManagement.Service.csproj" />
   </ItemGroup>
 </Project>
