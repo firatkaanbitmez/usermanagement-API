@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
 namespace UserManagement.Core.DTOs
@@ -32,5 +28,10 @@ namespace UserManagement.Core.DTOs
         public string Address { get; set; } = string.Empty;
 
         public string FullName => $"{FirstName} {LastName}";
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public bool IsNew { get; set; } = false;
+        public UserDTO? PreviousState { get; set; }
     }
 }
