@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using UserManagement.Core.DTOs;
+using UserManagement.Core.DTOs.Request;
 using UserManagement.Core.Entities;
 using UserManagement.Core.Interfaces;
 
@@ -53,14 +54,16 @@ namespace UserManagement.Service.Services
             }
         }
 
-        public async Task<UserDTO> AddUserAsync(UserDTO userDto)
+        public async Task<UserDTO> AddUserAsync(CreateUserRequest createUserRequest)
         {
             try
             {
-                var user = _mapper.Map<User>(userDto);
+                var user = _mapper.Map<User>(createUserRequest);
                 user.CreatedAt = DateTime.UtcNow;
-                user.UpdatedAt = DateTime.UtcNow;
-                user.IsNew = true; // Kullanıcı yeni eklendi
+               
+                user.IsActive = true; // Ensure IsActive is set to true
+                user.IsNew = true; // New user flag
+
                 await _unitOfWork.Users.AddAsync(user);
                 await _unitOfWork.CommitAsync();
 
@@ -77,15 +80,15 @@ namespace UserManagement.Service.Services
             }
         }
 
-        public async Task UpdateUserAsync(UserDTO userDto)
+        public async Task UpdateUserAsync(UpdateUserRequest updateUserRequest)
         {
             try
             {
-                _logger.LogInformation("Fetching user with id {Id}", userDto.Id);
-                var user = await _unitOfWork.Users.GetByIdAsync(userDto.Id);
+                _logger.LogInformation("Fetching user with id {Id}", updateUserRequest.Id);
+                var user = await _unitOfWork.Users.GetByIdAsync(updateUserRequest.Id);
                 if (user == null)
                 {
-                    _logger.LogWarning("User not found with id {Id}", userDto.Id);
+                    _logger.LogWarning("User not found with id {Id}", updateUserRequest.Id);
                     throw new Exception("User not found.");
                 }
 
@@ -99,24 +102,23 @@ namespace UserManagement.Service.Services
                     IsActive = user.IsActive,
                     PhoneNumber = user.PhoneNumber,
                     Address = user.Address,
-                    CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt,
                     IsNew = user.IsNew
                 };
 
-                _logger.LogInformation("Updating user with id {Id}", userDto.Id);
-                user.FirstName = userDto.FirstName;
-                user.LastName = userDto.LastName;
-                user.Email = userDto.Email;
-                user.IsActive = userDto.IsActive;
-                user.PhoneNumber = userDto.PhoneNumber;
-                user.Address = userDto.Address;
+                _logger.LogInformation("Updating user with id {Id}", updateUserRequest.Id);
+                user.FirstName = updateUserRequest.FirstName;
+                user.LastName = updateUserRequest.LastName;
+                user.Email = updateUserRequest.Email;
+                user.IsActive = updateUserRequest.IsActive;
+                user.PhoneNumber = updateUserRequest.PhoneNumber;
+                user.Address = updateUserRequest.Address;
                 user.UpdatedAt = DateTime.UtcNow;
                 user.IsNew = false; // User updated
 
                 user.PreviousState = previousState; // Assign the previous state
 
-                _logger.LogInformation("Saving changes for user with id {Id}", userDto.Id);
+                _logger.LogInformation("Saving changes for user with id {Id}", updateUserRequest.Id);
                 await _unitOfWork.Users.UpdateAsync(user);
                 var changes = await _unitOfWork.CommitAsync();
 
@@ -126,19 +128,17 @@ namespace UserManagement.Service.Services
                 }
                 else
                 {
-                    _logger.LogWarning("No changes were made for user with id {Id}", userDto.Id);
+                    _logger.LogWarning("No changes were made for user with id {Id}", updateUserRequest.Id);
                 }
 
                 await _publishEndpoint.Publish(user);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating user with id {Id}", userDto.Id);
+                _logger.LogError(ex, "Error occurred while updating user with id {Id}", updateUserRequest.Id);
                 throw;
             }
         }
-
-
 
         public async Task DeleteUserAsync(int id)
         {

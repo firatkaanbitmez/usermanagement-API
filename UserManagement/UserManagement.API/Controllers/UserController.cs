@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using UserManagement.Core.DTOs;
+using UserManagement.Core.DTOs.Request;
 using UserManagement.Service.Services;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -47,25 +47,23 @@ namespace UserManagement.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody] UserDTO userDto)
+        public async Task<IActionResult> AddUser([FromBody] CreateUserRequest createUserRequest)
         {
             return await HandleRequestAsync(async () =>
             {
-                var createdUser = await _userService.AddUserAsync(userDto);
+                var createdUser = await _userService.AddUserAsync(createUserRequest);
                 return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
             }, "adding user");
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUser([FromBody] UserDTO userDto)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest updateUserRequest)
         {
-           
-
             return await HandleRequestAsync(async () =>
             {
-                await _userService.UpdateUserAsync(userDto);
+                await _userService.UpdateUserAsync(updateUserRequest);
                 return NoContent();
-            }, $"updating user with id {userDto.Id}");
+            }, $"updating user with id {updateUserRequest.Id}");
         }
 
         [HttpDelete("{id}")]
@@ -126,9 +124,8 @@ namespace UserManagement.API.Controllers
             }
             catch (Exception ex)
             {
-                
                 _logger.LogError(ex, $"Error occurred while {action}.");
-                Debug.WriteLine("asdas"+ex);
+                Debug.WriteLine(ex);
                 return StatusCode(500, new { message = ex.Message });
             }
         }
