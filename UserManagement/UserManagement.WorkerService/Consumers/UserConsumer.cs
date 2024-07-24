@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Logging;
 using UserManagement.Core.Entities;
+using System.Threading.Tasks;
 
 namespace UserManagement.WorkerService.Consumers
 {
@@ -16,9 +17,13 @@ namespace UserManagement.WorkerService.Consumers
         public Task Consume(ConsumeContext<User> context)
         {
             var user = context.Message;
-            _logger.LogInformation($"Received User: {user.FirstName} {user.LastName}, Email: {user.Email}, Date Created: {user.CreatedAt}, Active: {user.IsActive}");
+            _logger.LogInformation($"\nNew User Registration ID: {user.Id}\n" +
+                                   $"    First Name   : {user.FirstName}\n" +
+                                   $"    Last Name    : {user.LastName}\n" +
+                                   $"    Email        : {user.Email}\n" +
+                                   $"    Created Date : {user.CreatedAt:dd-MM-yyyy HH:mm:ss}\n" +
+                                   $"    Active       : {user.IsActive}");
             return Task.CompletedTask;
         }
     }
-
 }
