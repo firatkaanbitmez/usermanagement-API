@@ -33,7 +33,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"id\": 0,\r\n  \"name\": \"aaaaa\",\r\n  \"email\": \"aaaaa@gmail.com\",\r\n  \"dateAdded\": \"2024-07-22T13:19:35.367Z\"\r\n}",
+					"raw": "{\r\n  \"id\": 0,\r\n  \"firstName\": \"Fırat Kaan\",\r\n  \"lastName\": \"Bitmez\",\r\n  \"email\": \"firatbitmez@example.com\",\r\n  \"isActive\": false,\r\n  \"phoneNumber\": \"05456486467\",\r\n  \"address\": \"Samsun/Atakum\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -83,7 +83,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:5000/api/User/2",
+					"raw": "https://localhost:5000/api/User/19",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -92,7 +92,7 @@
 					"path": [
 						"api",
 						"User",
-						"2"
+						"19"
 					]
 				}
 			},
@@ -127,7 +127,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"id\": 2,\r\n  \"name\": \"fırat\",\r\n  \"email\": \"string\",\r\n  \"dateAdded\": \"2024-07-22T13:33:37.953Z\"\r\n}",
+					"raw": "{\r\n  \"id\": 19,\r\n  \"firstName\": \"AA Kaan\",\r\n  \"lastName\": \"Bitmez\",\r\n  \"email\": \"firatbitmez@example.com\",\r\n  \"isActive\": false,\r\n  \"phoneNumber\": \"05456486467\",\r\n  \"address\": \"Samsun/Atakum\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -135,7 +135,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:5000/api/User/2",
+					"raw": "https://localhost:5000/api/User/19",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -144,7 +144,7 @@
 					"path": [
 						"api",
 						"User",
-						"2"
+						"19"
 					]
 				}
 			},
@@ -203,7 +203,7 @@
 			"response": []
 		},
 		{
-			"name": "User-ActiveCount",
+			"name": "active-user-count",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -242,7 +242,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:5000/api/User/count",
+					"raw": "https://localhost:5000/api/User/active-user-count",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -251,7 +251,7 @@
 					"path": [
 						"api",
 						"User",
-						"count"
+						"active-user-count"
 					]
 				}
 			},
@@ -285,7 +285,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:5000/api/User/between?startDate=2024-07-20&endDate=2024-07-23",
+					"raw": "https://localhost:5000/api/User/between?startDate=2024-07-20&endDate=2024-07-26",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -303,8 +303,118 @@
 						},
 						{
 							"key": "endDate",
-							"value": "2024-07-23"
+							"value": "2024-07-26"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "active-user-list",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 2,\r\n  \"name\": \"string\",\r\n  \"email\": \"string\",\r\n  \"dateAdded\": \"2024-07-22T13:33:37.953Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5000/api/User/active",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"User",
+						"active"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "inactive-user-list",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 2,\r\n  \"name\": \"string\",\r\n  \"email\": \"string\",\r\n  \"dateAdded\": \"2024-07-22T13:33:37.953Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5000/api/User/inactive",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"User",
+						"inactive"
 					]
 				}
 			},
