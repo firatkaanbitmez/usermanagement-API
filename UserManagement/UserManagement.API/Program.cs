@@ -1,6 +1,10 @@
 using UserManagement.Repository;
 using UserManagement.Service;
 using MassTransit;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Baðýmlýlýk enjeksiyonlarýný ekle
+// Baðýmlýlýk enjeksiyonlarý
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string not found.");
 builder.Services.AddRepositories(connectionString);
 builder.Services.AddServices();
@@ -34,6 +38,9 @@ builder.Services.AddMassTransit(x =>
 });
 
 var app = builder.Build();
+
+// Global Exception Handler middleware
+app.UseMiddleware<GlobalExceptionHandler>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
