@@ -8,6 +8,7 @@ using UserManagement.Core.DTOs;
 using UserManagement.Core.DTOs.Request;
 using UserManagement.Core.Entities;
 using UserManagement.Core.Interfaces;
+using UserManagement.Service.Validators;
 
 namespace UserManagement.Service.Services
 {
@@ -58,9 +59,11 @@ namespace UserManagement.Service.Services
         {
             try
             {
+                UserRequestValidator.ValidateCreateUserRequest(createUserRequest);
+
                 var user = _mapper.Map<User>(createUserRequest);
                 user.CreatedAt = DateTime.UtcNow;
-               
+                user.UpdatedAt = default;
                 user.IsActive = true; // Ensure IsActive is set to true
                 user.IsNew = true; // New user flag
 
@@ -84,6 +87,8 @@ namespace UserManagement.Service.Services
         {
             try
             {
+                UserRequestValidator.ValidateUpdateUserRequest(updateUserRequest);
+
                 _logger.LogInformation("Fetching user with id {Id}", updateUserRequest.Id);
                 var user = await _unitOfWork.Users.GetByIdAsync(updateUserRequest.Id);
                 if (user == null)
@@ -102,6 +107,7 @@ namespace UserManagement.Service.Services
                     IsActive = user.IsActive,
                     PhoneNumber = user.PhoneNumber,
                     Address = user.Address,
+                    CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt,
                     IsNew = user.IsNew
                 };
@@ -113,7 +119,7 @@ namespace UserManagement.Service.Services
                 user.IsActive = updateUserRequest.IsActive;
                 user.PhoneNumber = updateUserRequest.PhoneNumber;
                 user.Address = updateUserRequest.Address;
-                user.UpdatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow; // Set UpdatedAt during update
                 user.IsNew = false; // User updated
 
                 user.PreviousState = previousState; // Assign the previous state
