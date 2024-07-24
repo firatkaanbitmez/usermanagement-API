@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using UserManagement.WorkerService.Consumers;
+using UserManagement.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,7 @@ var password = rabbitMqSettings["Password"] ?? throw new ArgumentNullException("
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumer<UserConsumer>(); // UserConsumer'ý ekliyoruz
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host(host, virtualHost, h =>
@@ -34,13 +37,18 @@ builder.Services.AddMassTransit(x =>
             h.Username(username);
             h.Password(password);
         });
+
+        cfg.ReceiveEndpoint("user_queue", e =>
+        {
+            e.ConfigureConsumer<UserConsumer>(context);
+        });
     });
 });
 
 var app = builder.Build();
 
 // Global Exception Handler middleware
-//app.UseMiddleware<GlobalExceptionHandler>();
+app.UseMiddleware<GlobalExceptionHandler>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

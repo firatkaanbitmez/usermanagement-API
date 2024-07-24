@@ -45,7 +45,7 @@ namespace UserManagement.Service.Services
 
             var user = _mapper.Map<User>(createUserRequest);
             user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = default;
+            user.UpdatedAt = default; // UpdatedAt nullable yapıldı
             user.IsActive = true; // Ensure IsActive is set to true
             user.IsNew = true; // New user flag
 
@@ -73,7 +73,7 @@ namespace UserManagement.Service.Services
             }
 
             // Clone the user object to avoid circular references
-            var previousState = new UserDTO
+            var previousState = new User
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -97,12 +97,13 @@ namespace UserManagement.Service.Services
             user.UpdatedAt = DateTime.UtcNow; // Set UpdatedAt during update
             user.IsNew = false; // User updated
 
+            user.PreviousState = previousState; // Assign the previous state
+
             _logger.LogInformation("Saving changes for user with id {Id}", updateUserRequest.Id);
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
 
             var userDto = _mapper.Map<UserDTO>(user);
-            userDto.PreviousState = previousState;
             await _publishEndpoint.Publish(userDto);
         }
 
