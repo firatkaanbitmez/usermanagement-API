@@ -40,7 +40,7 @@ builder.Services.AddMassTransit(x =>
 var app = builder.Build();
 
 // Global Exception Handler middleware
-app.UseMiddleware<GlobalExceptionHandler>();
+//app.UseMiddleware<GlobalExceptionHandler>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

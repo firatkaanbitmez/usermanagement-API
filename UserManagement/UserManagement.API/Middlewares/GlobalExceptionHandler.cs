@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Net;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 public class GlobalExceptionHandler
 {
@@ -36,7 +37,8 @@ public class GlobalExceptionHandler
         var response = new
         {
             StatusCode = context.Response.StatusCode,
-            Message = "Internal Server Error. Please try again later."
+            Message = "Internal Server Error. Please try again later.",
+            Detailed = exception.Message // Detaylı hata mesajı ekliyoruz
         };
 
         var jsonResponse = JsonSerializer.Serialize(response);

@@ -60,6 +60,7 @@ namespace UserManagement.Service.Services
                 var user = _mapper.Map<User>(userDto);
                 user.CreatedAt = DateTime.UtcNow;
                 user.UpdatedAt = DateTime.UtcNow;
+                user.IsNew = true; // Kullanıcı yeni eklendi
                 await _unitOfWork.Users.AddAsync(user);
                 await _unitOfWork.CommitAsync();
 
@@ -80,19 +81,64 @@ namespace UserManagement.Service.Services
         {
             try
             {
-                var user = _mapper.Map<User>(userDto);
+                _logger.LogInformation("Fetching user with id {Id}", userDto.Id);
+                var user = await _unitOfWork.Users.GetByIdAsync(userDto.Id);
+                if (user == null)
+                {
+                    _logger.LogWarning("User not found with id {Id}", userDto.Id);
+                    throw new Exception("User not found.");
+                }
+
+                // Clone the user object to avoid circular references
+                var previousState = new User
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    IsActive = user.IsActive,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address,
+                    CreatedAt = user.CreatedAt,
+                    UpdatedAt = user.UpdatedAt,
+                    IsNew = user.IsNew
+                };
+
+                _logger.LogInformation("Updating user with id {Id}", userDto.Id);
+                user.FirstName = userDto.FirstName;
+                user.LastName = userDto.LastName;
+                user.Email = userDto.Email;
+                user.IsActive = userDto.IsActive;
+                user.PhoneNumber = userDto.PhoneNumber;
+                user.Address = userDto.Address;
                 user.UpdatedAt = DateTime.UtcNow;
+                user.IsNew = false; // User updated
+
+                user.PreviousState = previousState; // Assign the previous state
+
+                _logger.LogInformation("Saving changes for user with id {Id}", userDto.Id);
                 await _unitOfWork.Users.UpdateAsync(user);
-                await _unitOfWork.CommitAsync();
+                var changes = await _unitOfWork.CommitAsync();
+
+                if (changes > 0)
+                {
+                    _logger.LogInformation("User updated: {User}", user);
+                }
+                else
+                {
+                    _logger.LogWarning("No changes were made for user with id {Id}", userDto.Id);
+                }
 
                 await _publishEndpoint.Publish(user);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating user.");
+                _logger.LogError(ex, "Error occurred while updating user with id {Id}", userDto.Id);
                 throw;
             }
         }
+
+
 
         public async Task DeleteUserAsync(int id)
         {

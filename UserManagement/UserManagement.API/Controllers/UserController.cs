@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UserManagement.Core.DTOs;
 using UserManagement.Service.Services;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace UserManagement.API.Controllers
 {
@@ -23,22 +24,17 @@ namespace UserManagement.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            try
+            return await HandleRequestAsync(async () =>
             {
                 var users = await _userService.GetAllUsersAsync();
                 return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching users.");
-                return StatusCode(500, new { message = "Internal Server Error. Please try again later." });
-            }
+            }, "fetching users");
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            try
+            return await HandleRequestAsync(async () =>
             {
                 var user = await _userService.GetUserByIdAsync(id);
                 if (user == null)
@@ -47,119 +43,93 @@ namespace UserManagement.API.Controllers
                     return NotFound(new { message = "User not found" });
                 }
                 return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching user with id {Id}", id);
-                return StatusCode(500, new { message = "Internal Server Error. Please try again later." });
-            }
+            }, $"fetching user with id {id}");
         }
 
         [HttpPost]
         public async Task<IActionResult> AddUser([FromBody] UserDTO userDto)
         {
-            try
+            return await HandleRequestAsync(async () =>
             {
                 var createdUser = await _userService.AddUserAsync(userDto);
                 return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while adding user.");
-                return StatusCode(500, new { message = "Internal Server Error. Please try again later." });
-            }
+            }, "adding user");
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDTO userDto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] UserDTO userDto)
         {
-            if (id != userDto.Id)
-                return BadRequest(new { message = "User ID mismatch" });
+           
 
-            try
+            return await HandleRequestAsync(async () =>
             {
                 await _userService.UpdateUserAsync(userDto);
                 return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while updating user with id {Id}", id);
-                return StatusCode(500, new { message = "Internal Server Error. Please try again later." });
-            }
+            }, $"updating user with id {userDto.Id}");
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            try
+            return await HandleRequestAsync(async () =>
             {
                 await _userService.DeleteUserAsync(id);
                 return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while deleting user with id {Id}", id);
-                return StatusCode(500, new { message = "Internal Server Error. Please try again later." });
-            }
+            }, $"deleting user with id {id}");
         }
 
         [HttpGet("active-user-count")]
         public async Task<IActionResult> GetActiveUserCount()
         {
-            try
+            return await HandleRequestAsync(async () =>
             {
                 var count = await _userService.GetActiveUserCountAsync();
                 return Ok(count);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching active user count.");
-                return StatusCode(500, new { message = "Internal Server Error. Please try again later." });
-            }
+            }, "fetching active user count");
         }
 
         [HttpGet("between")]
         public async Task<IActionResult> GetUsersAddedBetweenDates([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
-            try
+            return await HandleRequestAsync(async () =>
             {
                 var users = await _userService.GetUsersAddedBetweenDatesAsync(startDate, endDate);
                 return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching users between dates {StartDate} and {EndDate}", startDate, endDate);
-                return StatusCode(500, new { message = "Internal Server Error. Please try again later." });
-            }
+            }, $"fetching users between dates {startDate} and {endDate}");
         }
 
         [HttpGet("active")]
         public async Task<IActionResult> GetActiveUsers()
         {
-            try
+            return await HandleRequestAsync(async () =>
             {
                 var users = await _userService.GetActiveUsersAsync();
                 return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching active users.");
-                return StatusCode(500, new { message = "Internal Server Error. Please try again later." });
-            }
+            }, "fetching active users");
         }
 
         [HttpGet("inactive")]
         public async Task<IActionResult> GetInactiveUsers()
         {
-            try
+            return await HandleRequestAsync(async () =>
             {
                 var users = await _userService.GetInactiveUsersAsync();
                 return Ok(users);
+            }, "fetching inactive users");
+        }
+
+        private async Task<IActionResult> HandleRequestAsync(Func<Task<IActionResult>> func, string action)
+        {
+            try
+            {
+                return await func();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching inactive users.");
-                return StatusCode(500, new { message = "Internal Server Error. Please try again later." });
+                
+                _logger.LogError(ex, $"Error occurred while {action}.");
+                Debug.WriteLine("asdas"+ex);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }
