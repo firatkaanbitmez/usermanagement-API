@@ -1,10 +1,9 @@
 using UserManagement.Repository;
 using UserManagement.Service;
 using MassTransit;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using UserManagement.Service.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// FluentValidation konfigürasyonu
+builder.Services.AddFluentValidationAutoValidation()
+                 .AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<UserRequestValidator>();
 
 // Baðýmlýlýk enjeksiyonlarý
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string not found.");
@@ -40,7 +44,7 @@ builder.Services.AddMassTransit(x =>
 var app = builder.Build();
 
 // Global Exception Handler middleware
-//app.UseMiddleware<GlobalExceptionHandler>();
+app.UseMiddleware<GlobalExceptionHandler>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

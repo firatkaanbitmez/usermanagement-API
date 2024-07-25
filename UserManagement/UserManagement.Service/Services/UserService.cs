@@ -41,7 +41,7 @@ namespace UserManagement.Service.Services
 
         public async Task<UserDTO> AddUserAsync(CreateUserRequest createUserRequest)
         {
-            UserRequestValidator.ValidateCreateUserRequest(createUserRequest);
+     
 
             var user = _mapper.Map<User>(createUserRequest);
             user.CreatedAt = DateTime.UtcNow;
@@ -62,8 +62,7 @@ namespace UserManagement.Service.Services
 
         public async Task UpdateUserAsync(UpdateUserRequest updateUserRequest)
         {
-            UserRequestValidator.ValidateUpdateUserRequest(updateUserRequest);
-
+            
             _logger.LogInformation("Fetching user with id {Id}", updateUserRequest.Id);
             var user = await _unitOfWork.Users.GetByIdAsync(updateUserRequest.Id);
             if (user == null)

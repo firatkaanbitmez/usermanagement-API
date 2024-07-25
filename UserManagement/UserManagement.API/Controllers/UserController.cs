@@ -42,6 +42,11 @@ namespace UserManagement.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUser([FromBody] CreateUserRequest createUserRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var createdUser = await _userService.AddUserAsync(createUserRequest);
             return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
         }
@@ -49,6 +54,11 @@ namespace UserManagement.API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest updateUserRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             await _userService.UpdateUserAsync(updateUserRequest);
             return NoContent();
         }

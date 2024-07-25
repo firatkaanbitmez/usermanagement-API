@@ -1,4 +1,5 @@
-﻿using System;
+﻿// BaseEntity.cs
+using System;
 
 namespace UserManagement.Core.Entities
 {

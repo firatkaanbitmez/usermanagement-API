@@ -1,12 +1,12 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Logging;
-using UserManagement.Core.DTOs;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace UserManagement.WorkerService.Consumers
 {
-    public class UserConsumer : IConsumer<UserDTO>
+    public class UserConsumer : IConsumer<UserWorkerDTO>
     {
         private readonly ILogger<UserConsumer> _logger;
 
@@ -15,7 +15,7 @@ namespace UserManagement.WorkerService.Consumers
             _logger = logger;
         }
 
-        public async Task Consume(ConsumeContext<UserDTO> context)
+        public async Task Consume(ConsumeContext<UserWorkerDTO> context)
         {
             var user = context.Message;
             try

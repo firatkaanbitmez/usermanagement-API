@@ -1,24 +1,61 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// UserRequestValidator.cs
+using FluentValidation;
 using UserManagement.Core.DTOs.Request;
 
 namespace UserManagement.Service.Validators
 {
-    public static class UserRequestValidator
+    public class UserRequestValidator : AbstractValidator<CreateUserRequest>
     {
-        public static void ValidateCreateUserRequest(CreateUserRequest request)
+        public UserRequestValidator()
         {
-            ValidateRequest(request);
-        }
+            RuleFor(user => user.FirstName)
+                .NotEmpty().WithMessage("First name is required.")
+                .MaximumLength(50).WithMessage("First name cannot be longer than 50 characters.");
 
-        public static void ValidateUpdateUserRequest(UpdateUserRequest request)
-        {
-            ValidateRequest(request);
-        }
+            RuleFor(user => user.LastName)
+                .NotEmpty().WithMessage("Last name is required.")
+                .MaximumLength(50).WithMessage("Last name cannot be longer than 50 characters.");
 
-        private static void ValidateRequest(object request)
+            RuleFor(user => user.Email)
+                .NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("Invalid email address.");
+
+            RuleFor(user => user.PhoneNumber)
+                .Matches(@"^(\+[0-9]{9,15})$").WithMessage("Invalid phone number.")
+                .When(user => !string.IsNullOrEmpty(user.PhoneNumber));
+
+            RuleFor(user => user.Address)
+                .MaximumLength(100).WithMessage("Address cannot be longer than 100 characters.")
+                .When(user => !string.IsNullOrEmpty(user.Address));
+        }
+    }
+
+    public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
+    {
+        public UpdateUserRequestValidator()
         {
-            var validationContext = new ValidationContext(request);
-            Validator.ValidateObject(request, validationContext, validateAllProperties: true);
+            RuleFor(user => user.Id)
+                .NotEmpty().WithMessage("ID is required.");
+
+            RuleFor(user => user.FirstName)
+                .NotEmpty().WithMessage("First name is required.")
+                .MaximumLength(50).WithMessage("First name cannot be longer than 50 characters.");
+
+            RuleFor(user => user.LastName)
+                .NotEmpty().WithMessage("Last name is required.")
+                .MaximumLength(50).WithMessage("Last name cannot be longer than 50 characters.");
+
+            RuleFor(user => user.Email)
+                .NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("Invalid email address.");
+
+            RuleFor(user => user.PhoneNumber)
+                .Matches(@"^(\+[0-9]{9,15})$").WithMessage("Invalid phone number.")
+                .When(user => !string.IsNullOrEmpty(user.PhoneNumber));
+
+            RuleFor(user => user.Address)
+                .MaximumLength(100).WithMessage("Address cannot be longer than 100 characters.")
+                .When(user => !string.IsNullOrEmpty(user.Address));
         }
     }
 }
