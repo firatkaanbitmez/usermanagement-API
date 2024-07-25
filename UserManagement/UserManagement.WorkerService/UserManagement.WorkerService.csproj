@@ -12,4 +12,8 @@
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.3" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UserManagement.API\UserManagement.API.csproj" />
+  </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UserManagement.WorkerService
 {
-    public class UserWorkerDTO
+    public class UserDTO
     {
         public int Id { get; set; }
 
