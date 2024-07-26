@@ -13,7 +13,7 @@ namespace UserManagement.Core.Interfaces
         Task<UserDTO> GetUserByIdAsync(int id);
         Task<CreateUserResponse> AddUserAsync(CreateUserRequest createUserRequest);
         Task<UpdateUserResponse> UpdateUserAsync(UpdateUserRequest updateUserRequest);
-        Task<DeleteUserResponse> DeleteUserAsync(int id);
+        Task<DeleteUserResponse> DeleteUserAsync(DeleteUserRequest deleteUserRequest);
         Task<IEnumerable<UserDTO>> GetUsersAddedBetweenDatesAsync(DateTime startDate, DateTime endDate);
         Task<int> GetActiveUserCountAsync();
         Task<IEnumerable<UserDTO>> GetActiveUsersAsync();

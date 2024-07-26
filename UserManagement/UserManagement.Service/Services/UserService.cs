@@ -83,9 +83,9 @@ namespace UserManagement.Service.Services
             return new UpdateUserResponse { Id = user.Id };
         }
 
-        public async Task<DeleteUserResponse> DeleteUserAsync(int id)
+        public async Task<DeleteUserResponse> DeleteUserAsync(DeleteUserRequest deleteUserRequest)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(id);
+            var user = await _unitOfWork.Users.GetByIdAsync(deleteUserRequest.Id);
             if (user != null)
             {
                 await _unitOfWork.Users.DeleteAsync(user);

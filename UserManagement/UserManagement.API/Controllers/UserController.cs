@@ -66,7 +66,7 @@ namespace UserManagement.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var response = await _userService.DeleteUserAsync(id);
+            var response = await _userService.DeleteUserAsync(new DeleteUserRequest { Id = id });
             return Ok(response);
         }
 
