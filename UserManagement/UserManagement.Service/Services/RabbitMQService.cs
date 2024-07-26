@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace UserManagement.Service
 {
-    public class RabbitMQService
+    public class RabbitMQService : IDisposable
     {
         private readonly IConnection _connection;
         private readonly IModel _channel;
@@ -31,7 +31,7 @@ namespace UserManagement.Service
             _channel.BasicPublish(exchange: "", routingKey: _queueName, basicProperties: null, body: body);
         }
 
-        ~RabbitMQService()
+        public void Dispose()
         {
             _channel.Close();
             _connection.Close();

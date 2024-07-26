@@ -41,7 +41,6 @@ namespace UserManagement.Service.Services
         {
             var user = _mapper.Map<User>(createUserRequest);
             user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = default;
             user.IsActive = true;
             user.IsNew = true;
 
@@ -49,18 +48,7 @@ namespace UserManagement.Service.Services
             await _unitOfWork.CommitAsync();
 
             var userDto = _mapper.Map<UserDTO>(user);
-            var message = $"\nNew User Registration\n" +
-                          $"----------------------\n" +
-                          $"ID          : {user.Id}\n" +
-                          $"First Name  : {user.FirstName}\n" +
-                          $"Last Name   : {user.LastName}\n" +
-                          $"Email       : {user.Email}\n" +
-                          $"PhoneNumber : {user.PhoneNumber}\n" +
-                          $"Address     : {user.Address}\n" +
-                          $"Created Date: {user.CreatedAt:dd-MM-yyyy HH:mm:ss}\n" +
-                          $"Active      : {user.IsActive}\n" +
-                          $"----------------------\n" +
-                          "User registration processed successfully.";
+            var message = MessageBuilder.BuildAddUserMessage(userDto);
 
             _rabbitMQService.SendMessage(message);
 
@@ -75,26 +63,9 @@ namespace UserManagement.Service.Services
                 throw new Exception("User not found.");
             }
 
-            var previousState = new UserDTO
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                IsActive = user.IsActive,
-                PhoneNumber = user.PhoneNumber,
-                Address = user.Address,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt,
-                IsNew = user.IsNew
-            };
+            var previousState = _mapper.Map<UserDTO>(user);
 
-            user.FirstName = updateUserRequest.FirstName;
-            user.LastName = updateUserRequest.LastName;
-            user.Email = updateUserRequest.Email;
-            user.IsActive = updateUserRequest.IsActive;
-            user.PhoneNumber = updateUserRequest.PhoneNumber;
-            user.Address = updateUserRequest.Address;
+            _mapper.Map(updateUserRequest, user);
             user.UpdatedAt = DateTime.UtcNow;
             user.IsNew = false;
 
@@ -104,27 +75,7 @@ namespace UserManagement.Service.Services
             var userDto = _mapper.Map<UserDTO>(user);
             userDto.PreviousState = previousState;
 
-            var changes = new List<string>();
-            if (user.FirstName != userDto.PreviousState.FirstName)
-                changes.Add($"First Name: {userDto.PreviousState.FirstName} -> {user.FirstName}");
-            if (user.LastName != userDto.PreviousState.LastName)
-                changes.Add($"Last Name: {userDto.PreviousState.LastName} -> {user.LastName}");
-            if (user.Email != userDto.PreviousState.Email)
-                changes.Add($"Email: {userDto.PreviousState.Email} -> {user.Email}");
-            if (user.PhoneNumber != userDto.PreviousState.PhoneNumber)
-                changes.Add($"Phone Number: {userDto.PreviousState.PhoneNumber} -> {user.PhoneNumber}");
-            if (user.Address != userDto.PreviousState.Address)
-                changes.Add($"Address: {userDto.PreviousState.Address} -> {user.Address}");
-            if (user.IsActive != userDto.PreviousState.IsActive)
-                changes.Add($"Active: {userDto.PreviousState.IsActive} -> {user.IsActive}");
-
-            var message = $"\nUser Update\n" +
-                          $"----------------------\n" +
-                          $"ID          : {user.Id}\n" +
-                          $"Changes     : \n  - {string.Join("\n  - ", changes)}\n" +
-                          $"Updated Date: {user.UpdatedAt:dd-MM-yyyy HH:mm:ss}\n" +
-                          $"----------------------\n" +
-                          "User update processed successfully.";
+            var message = MessageBuilder.BuildUpdateUserMessage(userDto, previousState);
 
             _rabbitMQService.SendMessage(message);
         }
@@ -138,17 +89,7 @@ namespace UserManagement.Service.Services
                 await _unitOfWork.CommitAsync();
 
                 var userDto = _mapper.Map<UserDTO>(user);
-                var message = $"\nUser Deletion\n" +
-                              $"----------------------\n" +
-                              $"ID          : {user.Id}\n" +
-                              $"First Name  : {user.FirstName}\n" +
-                              $"Last Name   : {user.LastName}\n" +
-                              $"Email       : {user.Email}\n" +
-                              $"PhoneNumber : {user.PhoneNumber}\n" +
-                              $"Address     : {user.Address}\n" +
-                              $"Deleted Date: {DateTime.UtcNow:dd-MM-yyyy HH:mm:ss}\n" +
-                              $"----------------------\n" +
-                              "User deletion processed successfully.";
+                var message = MessageBuilder.BuildDeleteUserMessage(userDto);
 
                 _rabbitMQService.SendMessage(message);
             }
