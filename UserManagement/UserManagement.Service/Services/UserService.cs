@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UserManagement.Core.DTOs;
 using UserManagement.Core.DTOs.Request;
 using UserManagement.Core.Entities;
