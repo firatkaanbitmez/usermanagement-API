@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using MassTransit;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using UserManagement.Core.DTOs;
 using UserManagement.Core.DTOs.Request;
 using UserManagement.Core.Entities;
 using UserManagement.Core.Interfaces;
-using UserManagement.Service.Validators;
 
 namespace UserManagement.Service.Services
 {
@@ -16,15 +14,15 @@ namespace UserManagement.Service.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IPublishEndpoint _publishEndpoint;
         private readonly ILogger<UserService> _logger;
+        private readonly RabbitMQService _rabbitMQService;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IPublishEndpoint publishEndpoint, ILogger<UserService> logger)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<UserService> logger, RabbitMQService rabbitMQService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _publishEndpoint = publishEndpoint;
             _logger = logger;
+            _rabbitMQService = rabbitMQService;
         }
 
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
@@ -41,37 +39,31 @@ namespace UserManagement.Service.Services
 
         public async Task<UserDTO> AddUserAsync(CreateUserRequest createUserRequest)
         {
-     
-
             var user = _mapper.Map<User>(createUserRequest);
             user.CreatedAt = DateTime.UtcNow;
             user.UpdatedAt = default;
-            user.IsActive = true; // Ensure IsActive is set to true
-            user.IsNew = true; // New user flag
+            user.IsActive = true;
+            user.IsNew = true;
 
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.CommitAsync();
 
-            _logger.LogInformation("User created: {User}", user);
-
             var userDto = _mapper.Map<UserDTO>(user);
-            await _publishEndpoint.Publish(userDto);
+            var message = $"User Added: {userDto.FullName}";
+
+            _rabbitMQService.SendMessage(message);
 
             return userDto;
         }
 
         public async Task UpdateUserAsync(UpdateUserRequest updateUserRequest)
         {
-            
-            _logger.LogInformation("Fetching user with id {Id}", updateUserRequest.Id);
             var user = await _unitOfWork.Users.GetByIdAsync(updateUserRequest.Id);
             if (user == null)
             {
-                _logger.LogWarning("User not found with id {Id}", updateUserRequest.Id);
                 throw new Exception("User not found.");
             }
 
-            // Clone the user object to avoid circular references
             var previousState = new UserDTO
             {
                 Id = user.Id,
@@ -86,23 +78,24 @@ namespace UserManagement.Service.Services
                 IsNew = user.IsNew
             };
 
-            _logger.LogInformation("Updating user with id {Id}", updateUserRequest.Id);
             user.FirstName = updateUserRequest.FirstName;
             user.LastName = updateUserRequest.LastName;
             user.Email = updateUserRequest.Email;
             user.IsActive = updateUserRequest.IsActive;
             user.PhoneNumber = updateUserRequest.PhoneNumber;
             user.Address = updateUserRequest.Address;
-            user.UpdatedAt = DateTime.UtcNow; // Set UpdatedAt during update
-            user.IsNew = false; // User updated
+            user.UpdatedAt = DateTime.UtcNow;
+            user.IsNew = false;
 
-            _logger.LogInformation("Saving changes for user with id {Id}", updateUserRequest.Id);
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
 
             var userDto = _mapper.Map<UserDTO>(user);
             userDto.PreviousState = previousState;
-            await _publishEndpoint.Publish(userDto);
+
+            var message = $"User Updated: {userDto.FullName}";
+
+            _rabbitMQService.SendMessage(message);
         }
 
         public async Task DeleteUserAsync(int id)
@@ -114,7 +107,9 @@ namespace UserManagement.Service.Services
                 await _unitOfWork.CommitAsync();
 
                 var userDto = _mapper.Map<UserDTO>(user);
-                await _publishEndpoint.Publish(userDto);
+                var message = $"User Deleted: {userDto.FullName}";
+
+                _rabbitMQService.SendMessage(message);
             }
         }
 

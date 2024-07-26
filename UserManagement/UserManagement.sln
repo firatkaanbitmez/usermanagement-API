@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.API", "UserManagement.API\UserManagement.API.csproj", "{C60AC6F7-65FA-453F-9899-D65F207563CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.API", "UserManagement.API\UserManagement.API.csproj", "{C60AC6F7-65FA-453F-9899-D65F207563CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Core", "UserManagement.Core\UserManagement.Core.csproj", "{CECFF685-AB15-47CE-8D08-4362490B07DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Core", "UserManagement.Core\UserManagement.Core.csproj", "{CECFF685-AB15-47CE-8D08-4362490B07DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Repository", "UserManagement.Repository\UserManagement.Repository.csproj", "{B19EB697-9B9F-4EFE-BE65-1239FEBBE664}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Repository", "UserManagement.Repository\UserManagement.Repository.csproj", "{B19EB697-9B9F-4EFE-BE65-1239FEBBE664}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Service", "UserManagement.Service\UserManagement.Service.csproj", "{CECE7BEF-98C5-49DA-BB5C-5E66147E0F37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Service", "UserManagement.Service\UserManagement.Service.csproj", "{CECE7BEF-98C5-49DA-BB5C-5E66147E0F37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.WorkerService", "UserManagement.WorkerService\UserManagement.WorkerService.csproj", "{549F53A1-D6D8-496C-8283-24C4568246EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService", "WorkerService\WorkerService.csproj", "{D466FBF4-1E3A-435F-BB2A-CDFB6351DF0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{CECE7BEF-98C5-49DA-BB5C-5E66147E0F37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CECE7BEF-98C5-49DA-BB5C-5E66147E0F37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CECE7BEF-98C5-49DA-BB5C-5E66147E0F37}.Release|Any CPU.Build.0 = Release|Any CPU
-		{549F53A1-D6D8-496C-8283-24C4568246EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{549F53A1-D6D8-496C-8283-24C4568246EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{549F53A1-D6D8-496C-8283-24C4568246EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{549F53A1-D6D8-496C-8283-24C4568246EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D466FBF4-1E3A-435F-BB2A-CDFB6351DF0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D466FBF4-1E3A-435F-BB2A-CDFB6351DF0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D466FBF4-1E3A-435F-BB2A-CDFB6351DF0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D466FBF4-1E3A-435F-BB2A-CDFB6351DF0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
