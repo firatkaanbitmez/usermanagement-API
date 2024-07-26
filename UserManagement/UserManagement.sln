@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Repository",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.Service", "UserManagement.Service\UserManagement.Service.csproj", "{CECE7BEF-98C5-49DA-BB5C-5E66147E0F37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService", "WorkerService\WorkerService.csproj", "{D466FBF4-1E3A-435F-BB2A-CDFB6351DF0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.WorkerService", "WorkerService\UserManagement.WorkerService.csproj", "{D466FBF4-1E3A-435F-BB2A-CDFB6351DF0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
