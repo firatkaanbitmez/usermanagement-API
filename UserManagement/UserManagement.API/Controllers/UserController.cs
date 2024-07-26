@@ -47,8 +47,8 @@ namespace UserManagement.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var createdUser = await _userService.AddUserAsync(createUserRequest);
-            return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
+            var response = await _userService.AddUserAsync(createUserRequest);
+            return CreatedAtAction(nameof(GetUser), new { id = response.Id }, response);
         }
 
         [HttpPut]
@@ -59,16 +59,17 @@ namespace UserManagement.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _userService.UpdateUserAsync(updateUserRequest);
-            return NoContent();
+            var response = await _userService.UpdateUserAsync(updateUserRequest);
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            await _userService.DeleteUserAsync(id);
-            return NoContent();
+            var response = await _userService.DeleteUserAsync(id);
+            return Ok(response);
         }
+
 
         [HttpGet("active-user-count")]
         public async Task<IActionResult> GetActiveUserCount()

@@ -7,6 +7,7 @@ using UserManagement.Core.Interfaces;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
+using UserManagement.Core.DTOs.Response;
 
 namespace UserManagement.Service.Services
 {
@@ -37,7 +38,7 @@ namespace UserManagement.Service.Services
             return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<UserDTO> AddUserAsync(CreateUserRequest createUserRequest)
+        public async Task<CreateUserResponse> AddUserAsync(CreateUserRequest createUserRequest)
         {
             var user = _mapper.Map<User>(createUserRequest);
             user.CreatedAt = DateTime.UtcNow;
@@ -52,10 +53,10 @@ namespace UserManagement.Service.Services
 
             _rabbitMQService.SendMessage(message);
 
-            return userDto;
+            return new CreateUserResponse { Id = user.Id };
         }
 
-        public async Task UpdateUserAsync(UpdateUserRequest updateUserRequest)
+        public async Task<UpdateUserResponse> UpdateUserAsync(UpdateUserRequest updateUserRequest)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(updateUserRequest.Id);
             if (user == null)
@@ -78,9 +79,11 @@ namespace UserManagement.Service.Services
             var message = MessageBuilder.BuildUpdateUserMessage(userDto, previousState);
 
             _rabbitMQService.SendMessage(message);
+
+            return new UpdateUserResponse { Id = user.Id };
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task<DeleteUserResponse> DeleteUserAsync(int id)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(id);
             if (user != null)
@@ -92,6 +95,12 @@ namespace UserManagement.Service.Services
                 var message = MessageBuilder.BuildDeleteUserMessage(userDto);
 
                 _rabbitMQService.SendMessage(message);
+
+                return new DeleteUserResponse { Id = user.Id };
+            }
+            else
+            {
+                throw new Exception("User not found.");
             }
         }
 
