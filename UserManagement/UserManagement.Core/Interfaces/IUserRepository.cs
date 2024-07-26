@@ -5,7 +5,7 @@ using UserManagement.Core.Entities;
 
 namespace UserManagement.Core.Interfaces
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository : IGenericRepository<User>
     {
         Task<IEnumerable<User>> GetUsersAddedBetweenDatesAsync(DateTime startDate, DateTime endDate);
         Task<int> GetActiveUserCountAsync();

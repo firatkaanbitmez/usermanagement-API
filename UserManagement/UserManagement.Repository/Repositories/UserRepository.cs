@@ -8,7 +8,7 @@ using UserManagement.Core.Interfaces;
 
 namespace UserManagement.Repository.Repositories
 {
-    public class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository : GenericRepository<User>, IUserRepository
     {
         public UserRepository(DbContext context) : base(context)
         {

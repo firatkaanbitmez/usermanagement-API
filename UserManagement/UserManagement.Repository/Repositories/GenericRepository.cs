@@ -4,12 +4,12 @@ using System.Linq.Expressions;
 
 namespace UserManagement.Repository.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected readonly DbContext _context;
         protected readonly DbSet<T> _dbSet;
 
-        public Repository(DbContext context)
+        public GenericRepository(DbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();
