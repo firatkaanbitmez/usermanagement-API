@@ -4,6 +4,9 @@ using UserManagement.Core.DTOs;
 using UserManagement.Core.DTOs.Request;
 using UserManagement.Core.Entities;
 using UserManagement.Core.Interfaces;
+using System.Collections.Generic;
+using System;
+using System.Threading.Tasks;
 
 namespace UserManagement.Service.Services
 {
@@ -46,7 +49,18 @@ namespace UserManagement.Service.Services
             await _unitOfWork.CommitAsync();
 
             var userDto = _mapper.Map<UserDTO>(user);
-            var message = $"User Added: {userDto.FullName}";
+            var message = $"\nNew User Registration\n" +
+                          $"----------------------\n" +
+                          $"ID          : {user.Id}\n" +
+                          $"First Name  : {user.FirstName}\n" +
+                          $"Last Name   : {user.LastName}\n" +
+                          $"Email       : {user.Email}\n" +
+                          $"PhoneNumber : {user.PhoneNumber}\n" +
+                          $"Address     : {user.Address}\n" +
+                          $"Created Date: {user.CreatedAt:dd-MM-yyyy HH:mm:ss}\n" +
+                          $"Active      : {user.IsActive}\n" +
+                          $"----------------------\n" +
+                          "User registration processed successfully.";
 
             _rabbitMQService.SendMessage(message);
 
@@ -90,7 +104,27 @@ namespace UserManagement.Service.Services
             var userDto = _mapper.Map<UserDTO>(user);
             userDto.PreviousState = previousState;
 
-            var message = $"User Updated: {userDto.FullName}";
+            var changes = new List<string>();
+            if (user.FirstName != userDto.PreviousState.FirstName)
+                changes.Add($"First Name: {userDto.PreviousState.FirstName} -> {user.FirstName}");
+            if (user.LastName != userDto.PreviousState.LastName)
+                changes.Add($"Last Name: {userDto.PreviousState.LastName} -> {user.LastName}");
+            if (user.Email != userDto.PreviousState.Email)
+                changes.Add($"Email: {userDto.PreviousState.Email} -> {user.Email}");
+            if (user.PhoneNumber != userDto.PreviousState.PhoneNumber)
+                changes.Add($"Phone Number: {userDto.PreviousState.PhoneNumber} -> {user.PhoneNumber}");
+            if (user.Address != userDto.PreviousState.Address)
+                changes.Add($"Address: {userDto.PreviousState.Address} -> {user.Address}");
+            if (user.IsActive != userDto.PreviousState.IsActive)
+                changes.Add($"Active: {userDto.PreviousState.IsActive} -> {user.IsActive}");
+
+            var message = $"\nUser Update\n" +
+                          $"----------------------\n" +
+                          $"ID          : {user.Id}\n" +
+                          $"Changes     : \n  - {string.Join("\n  - ", changes)}\n" +
+                          $"Updated Date: {user.UpdatedAt:dd-MM-yyyy HH:mm:ss}\n" +
+                          $"----------------------\n" +
+                          "User update processed successfully.";
 
             _rabbitMQService.SendMessage(message);
         }
@@ -104,7 +138,17 @@ namespace UserManagement.Service.Services
                 await _unitOfWork.CommitAsync();
 
                 var userDto = _mapper.Map<UserDTO>(user);
-                var message = $"User Deleted: {userDto.FullName}";
+                var message = $"\nUser Deletion\n" +
+                              $"----------------------\n" +
+                              $"ID          : {user.Id}\n" +
+                              $"First Name  : {user.FirstName}\n" +
+                              $"Last Name   : {user.LastName}\n" +
+                              $"Email       : {user.Email}\n" +
+                              $"PhoneNumber : {user.PhoneNumber}\n" +
+                              $"Address     : {user.Address}\n" +
+                              $"Deleted Date: {DateTime.UtcNow:dd-MM-yyyy HH:mm:ss}\n" +
+                              $"----------------------\n" +
+                              "User deletion processed successfully.";
 
                 _rabbitMQService.SendMessage(message);
             }
