@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 using UserManagement.Core.DTOs.Response;
+using UserManagement.Service.Builders;
 
 namespace UserManagement.Service.Services
 {
@@ -49,7 +50,11 @@ namespace UserManagement.Service.Services
             await _unitOfWork.CommitAsync();
 
             var userDto = _mapper.Map<UserDTO>(user);
-            var message = MessageBuilder.BuildAddUserMessage(userDto);
+            var message = UserMessageBuilder.Create(userDto)
+                                             .WithHeader("New User Registration")
+                                             .WithUserDetails()
+                                             .WithFooter("User registration processed successfully.")
+                                             .Build();
 
             _rabbitMQService.SendMessage(message);
 
@@ -76,7 +81,11 @@ namespace UserManagement.Service.Services
             var userDto = _mapper.Map<UserDTO>(user);
             userDto.PreviousState = previousState;
 
-            var message = MessageBuilder.BuildUpdateUserMessage(userDto, previousState);
+            var message = UserMessageBuilder.Create(userDto, previousState)
+                                             .WithHeader("User Update")
+                                             .WithChanges()
+                                             .WithFooter("User update processed successfully.")
+                                             .Build();
 
             _rabbitMQService.SendMessage(message);
 
@@ -92,7 +101,11 @@ namespace UserManagement.Service.Services
                 await _unitOfWork.CommitAsync();
 
                 var userDto = _mapper.Map<UserDTO>(user);
-                var message = MessageBuilder.BuildDeleteUserMessage(userDto);
+                var message = UserMessageBuilder.Create(userDto)
+                                                 .WithHeader("User Deletion")
+                                                 .WithUserDetails()
+                                                 .WithFooter("User deletion processed successfully.")
+                                                 .Build();
 
                 _rabbitMQService.SendMessage(message);
 
