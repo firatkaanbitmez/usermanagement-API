@@ -13,7 +13,7 @@ namespace UserManagement.Core.DTOs
         public string PhoneNumber { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string FullName => $"{FirstName} {LastName}";
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool IsNew { get; set; } = false;
         public UserDTO? PreviousState { get; set; }

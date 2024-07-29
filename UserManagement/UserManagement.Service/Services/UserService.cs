@@ -43,6 +43,8 @@ namespace UserManagement.Service.Services
         {
             var user = _mapper.Map<User>(createUserRequest);
             user.CreatedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.MinValue;
+
             user.IsActive = true;
             user.IsNew = true;
 
