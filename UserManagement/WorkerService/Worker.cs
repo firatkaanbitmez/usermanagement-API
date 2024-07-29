@@ -4,14 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using WorkerService.Consumers;
 
-namespace WorkerService.Services
+namespace WorkerService
 {
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly RabbitMQConsumer _consumer;
+        private readonly RabbitMQUserConsumer _consumer;
 
-        public Worker(ILogger<Worker> logger, RabbitMQConsumer consumer)
+        public Worker(ILogger<Worker> logger, RabbitMQUserConsumer consumer)
         {
             _logger = logger;
             _consumer = consumer;

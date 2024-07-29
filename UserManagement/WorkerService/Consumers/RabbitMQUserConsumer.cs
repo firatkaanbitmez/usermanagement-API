@@ -6,12 +6,12 @@ using WorkerService.Infrastructure;
 
 namespace WorkerService.Consumers
 {
-    public class RabbitMQConsumer
+    public class RabbitMQUserConsumer
     {
-        private readonly ILogger<RabbitMQConsumer> _logger;
+        private readonly ILogger<RabbitMQUserConsumer> _logger;
         private readonly IModel _channel;
 
-        public RabbitMQConsumer(RabbitMQConnection rabbitMQConnection, ILogger<RabbitMQConsumer> logger)
+        public RabbitMQUserConsumer(RabbitMQConnection rabbitMQConnection, ILogger<RabbitMQUserConsumer> logger)
         {
             _logger = logger;
             _channel = rabbitMQConnection.GetChannel();
