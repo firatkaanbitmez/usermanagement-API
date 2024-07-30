@@ -52,9 +52,9 @@ namespace UserManagement.Service.Services
             await _unitOfWork.CommitAsync();
 
             var userDto = _mapper.Map<UserDTO>(user);
-            var message = UserMessageBuilder.Create(userDto)
+            var message = UserMessageBuilder.Create()
                                              .WithHeader("New User Registration")
-                                             .WithUserDetails()
+                                             .WithUserDetails(userDto)
                                              .WithFooter("User registration processed successfully.")
                                              .Build();
 
@@ -81,11 +81,10 @@ namespace UserManagement.Service.Services
             await _unitOfWork.CommitAsync();
 
             var userDto = _mapper.Map<UserDTO>(user);
-            userDto.PreviousState = previousState;
 
-            var message = UserMessageBuilder.Create(userDto, previousState)
+            var message = UserMessageBuilder.Create()
                                              .WithHeader("User Update")
-                                             .WithChanges()
+                                             .WithChanges(userDto, previousState)
                                              .WithFooter("User update processed successfully.")
                                              .Build();
 
@@ -103,9 +102,9 @@ namespace UserManagement.Service.Services
                 await _unitOfWork.CommitAsync();
 
                 var userDto = _mapper.Map<UserDTO>(user);
-                var message = UserMessageBuilder.Create(userDto)
+                var message = UserMessageBuilder.Create()
                                                  .WithHeader("User Deletion")
-                                                 .WithUserDetails()
+                                                 .WithUserDetails(userDto)
                                                  .WithFooter("User deletion processed successfully.")
                                                  .Build();
 
