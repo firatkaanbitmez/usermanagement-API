@@ -4,12 +4,12 @@ using UserManagement.API.Middlewares;
 
 namespace UserManagement.API.Middlewares
 {
-    public class UserIsActiveMiddleware
+    public class UserCheckMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<UserIsActiveMiddleware> _logger;
+        private readonly ILogger<UserCheckMiddleware> _logger;
 
-        public UserIsActiveMiddleware(RequestDelegate next, ILogger<UserIsActiveMiddleware> logger)
+        public UserCheckMiddleware(RequestDelegate next, ILogger<UserCheckMiddleware> logger)
         {
             _next = next;
             _logger = logger;
@@ -22,13 +22,14 @@ namespace UserManagement.API.Middlewares
             if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out var id))
             {
                 var user = await userService.GetUserByIdAsync(id);
-                if (user == null || !user.IsActive)
+                if (user == null )
                 {
-                    _logger.LogWarning("Attempt to access inactive or non-existent user with ID {UserId}.", id);
+                    _logger.LogWarning("Attempt to access non-existent user with ID {UserId}.", id);
                     context.Response.StatusCode = 403;
-                    await context.Response.WriteAsync("Access denied. User is inactive or does not exist.");
+                    await context.Response.WriteAsync("Access denied. User is does not exist.");
                     return;
                 }
+              
             }
 
             await _next(context);
@@ -41,6 +42,6 @@ public static class UserIsActiveMiddlewareExtensions
 {
     public static IApplicationBuilder UseUserIsActiveMiddleware(this IApplicationBuilder builder)
     {
-        return builder.UseMiddleware<UserIsActiveMiddleware>();
+        return builder.UseMiddleware<UserCheckMiddleware>();
     }
 }

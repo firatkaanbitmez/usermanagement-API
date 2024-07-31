@@ -22,7 +22,7 @@ builder.Services.AddSingleton<RabbitMQService>();
 
 var app = builder.Build();
 
-app.UseMiddleware<UserIsActiveMiddleware>();
+app.UseMiddleware<UserCheckMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
