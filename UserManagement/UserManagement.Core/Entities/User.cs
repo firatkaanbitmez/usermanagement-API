@@ -23,8 +23,6 @@ namespace UserManagement.Core.Entities
 
         public string Address { get; set; } = string.Empty;
 
-        [NotMapped]
-        public bool IsNew { get; set; } // Kullanıcının yeni mi yoksa güncellenmiş mi olduğunu belirtir
 
         [NotMapped]
         public User? PreviousState { get; set; } // Önceki durumu saklar, nullable olarak işaretlenmiştir

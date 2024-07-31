@@ -10,8 +10,8 @@ namespace UserManagement.Service.Validators
             Include(new BaseUserRequestValidator());
 
             RuleFor(user => user.Address)
-                .MaximumLength(100).WithMessage(ValidationMessages.MaxLength)
-                .When(user => !string.IsNullOrEmpty(user.Address));
+                .NotEmpty().WithMessage(ValidationMessages.RequiredField)
+                .MaximumLength(150).WithMessage(ValidationMessages.MaxLength);
         }
     }
 
@@ -25,8 +25,12 @@ namespace UserManagement.Service.Validators
             Include(new BaseUserRequestValidator());
 
             RuleFor(user => user.Address)
-                .MaximumLength(100).WithMessage(ValidationMessages.MaxLength)
-                .When(user => !string.IsNullOrEmpty(user.Address));
+                .NotEmpty().WithMessage(ValidationMessages.RequiredField)
+                .MaximumLength(150).WithMessage(ValidationMessages.MaxLength);
+
+            RuleFor(user => user.PhoneNumber)
+                .NotEmpty().WithMessage(ValidationMessages.RequiredField)
+                .Matches(@"^(\+[0-9]{9,15})$").WithMessage(ValidationMessages.InvalidPhoneNumber);
         }
     }
 
@@ -47,8 +51,8 @@ namespace UserManagement.Service.Validators
                 .EmailAddress().WithMessage(ValidationMessages.InvalidEmail);
 
             RuleFor(user => user.PhoneNumber)
-                .Matches(@"^(\+[0-9]{9,15})$").WithMessage(ValidationMessages.InvalidPhoneNumber)
-                .When(user => !string.IsNullOrEmpty(user.PhoneNumber));
+                .NotEmpty().WithMessage(ValidationMessages.RequiredField)
+                .Matches(@"^(\+[0-9]{9,15})$").WithMessage(ValidationMessages.InvalidPhoneNumber);
         }
     }
 }

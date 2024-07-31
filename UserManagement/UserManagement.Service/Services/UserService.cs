@@ -46,7 +46,6 @@ namespace UserManagement.Service.Services
             user.UpdatedAt = DateTime.MinValue;
 
             user.IsActive = true;
-            user.IsNew = true;
 
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.CommitAsync();
@@ -75,7 +74,6 @@ namespace UserManagement.Service.Services
 
             _mapper.Map(updateUserRequest, user);
             user.UpdatedAt = DateTime.UtcNow;
-            user.IsNew = false;
 
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.CommitAsync();

@@ -12,7 +12,6 @@
         public string FullName => $"{FirstName} {LastName}";
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public bool IsNew { get; set; } = false;
         public UserResponse? PreviousState { get; set; }
     }
 }

@@ -12,7 +12,6 @@ namespace UserManagement.Service.MappingProfiles
             CreateMap<User, UserDTO>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt))
-                .ForMember(dest => dest.IsNew, opt => opt.MapFrom(src => src.IsNew))
                 .ForMember(dest => dest.PreviousState, opt => opt.Ignore());
 
             CreateMap<UserDTO, User>();
