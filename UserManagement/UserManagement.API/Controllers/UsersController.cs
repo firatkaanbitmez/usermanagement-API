@@ -30,35 +30,20 @@ namespace UserManagement.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                _logger.LogWarning("User not found with id {Id}", id);
-                return NotFound(new { message = "User not found" });
-            }
+            var user = await _userService.GetUserByIdAsync(id);         
             return Ok(user);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddUser([FromBody] CreateUserRequest createUserRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var response = await _userService.AddUserAsync(createUserRequest);
             return CreatedAtAction(nameof(GetUser), new { id = response.Id }, response);
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest updateUserRequest)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
+        {          
             var response = await _userService.UpdateUserAsync(updateUserRequest);
             return Ok(response);
         }
