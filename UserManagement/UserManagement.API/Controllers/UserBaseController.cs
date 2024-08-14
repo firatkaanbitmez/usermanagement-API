@@ -27,48 +27,17 @@ namespace UserManagement.API.Controllers
             }
         }
 
-
         protected IActionResult ApiResponse<T>(HttpStatusCode httpStatusCode, UserDataResponse<T> response)
         {
+            if (!response.IsSuccessful)
+            {
+                return StatusCode((int)httpStatusCode, response);
+            }
+
             return StatusCode((int)httpStatusCode, response);
         }
 
 
 
-        private IActionResult SendResponse(dynamic result)
-        {
-            if (result.IsSuccessful)
-            {
-                switch (result.HttpStatusCode)
-                {
-                    case (int)HttpStatusCode.OK:
-                        return Ok(result);
-                    case (int)HttpStatusCode.Created:
-                        return Created("", result);
-                    case (int)HttpStatusCode.Accepted:
-                        return Accepted(result);
-                    case (int)HttpStatusCode.NoContent:
-                        return NoContent();
-                }
-            }
-            else
-            {
-                switch (result.HttpStatusCode)
-                {
-                    case (int)HttpStatusCode.BadRequest:
-                        return BadRequest(new ErrorDataResponse(result.ErrorMessageList, HttpStatusCode.BadRequest));
-                    case (int)HttpStatusCode.Unauthorized:
-                        return Unauthorized(new { Message = "Unauthorized request" });
-                    case (int)HttpStatusCode.Forbidden:
-                        return Forbid();
-                    case (int)HttpStatusCode.NotFound:
-                        return NotFound();
-                    default:
-                        return BadRequest();
-                }
-            }
-
-            return BadRequest();
-        }
     }
 }

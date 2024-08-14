@@ -4,19 +4,20 @@ using System.Threading.Tasks;
 using UserManagement.Core.DTOs;
 using UserManagement.Core.DTOs.Request;
 using UserManagement.Core.DTOs.Response;
+using UserManagement.Core.Responses;
 
 namespace UserManagement.Core.Interfaces
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserDTO>> GetAllUsersAsync();
-        Task<UserDTO> GetUserByIdAsync(int id);
-        Task<CreateUserResponse> AddUserAsync(CreateUserRequest createUserRequest);
-        Task<UpdateUserResponse> UpdateUserAsync(UpdateUserRequest updateUserRequest);
-        Task<DeleteUserResponse> DeleteUserAsync(DeleteUserRequest deleteUserRequest);
-        Task<IEnumerable<UserDTO>> GetUsersAddedBetweenDatesAsync(DateTime startDate, DateTime endDate);
-        Task<int> GetActiveUserCountAsync();
-        Task<IEnumerable<UserDTO>> GetActiveUsersAsync();
-        Task<IEnumerable<UserDTO>> GetInactiveUsersAsync();
+        Task<UserDataResponse<IEnumerable<UserDTO>>> GetAllUsersAsync();
+        Task<UserDataResponse<UserDTO>> GetUserByIdAsync(int id);
+        Task<UserDataResponse<CreateUserResponse>> AddUserAsync(CreateUserRequest createUserRequest);
+        Task<UserDataResponse<UpdateUserResponse>> UpdateUserAsync(UpdateUserRequest updateUserRequest);
+        Task<UserDataResponse<DeleteUserResponse>> DeleteUserAsync(DeleteUserRequest deleteUserRequest);
+        Task<UserDataResponse<IEnumerable<UserDTO>>> GetUsersAddedBetweenDatesAsync(DateTime startDate, DateTime endDate);
+        Task<UserDataResponse<int>> GetActiveUserCountAsync();
+        Task<UserDataResponse<IEnumerable<UserDTO>>> GetActiveUsersAsync();
+        Task<UserDataResponse<IEnumerable<UserDTO>>> GetInactiveUsersAsync();
     }
 }

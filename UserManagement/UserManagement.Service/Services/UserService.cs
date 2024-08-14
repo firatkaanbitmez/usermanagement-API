@@ -1,14 +1,16 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using UserManagement.Core.DTOs;
 using UserManagement.Core.DTOs.Request;
-using UserManagement.Core.Entities;
-using UserManagement.Core.Interfaces;
-using System.Collections.Generic;
-using System;
-using System.Threading.Tasks;
 using UserManagement.Core.DTOs.Response;
+using UserManagement.Core.Interfaces;
+using UserManagement.Core.Responses;
+using UserManagement.Core.Extensions;
 using UserManagement.Service.Builders;
+using UserManagement.Core.Entities;
 
 namespace UserManagement.Service.Services
 {
@@ -16,127 +18,126 @@ namespace UserManagement.Service.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ILogger<UserService> _logger;
         private readonly RabbitMQService _rabbitMQService;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<UserService> logger, RabbitMQService rabbitMQService)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, RabbitMQService rabbitMQService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _logger = logger;
             _rabbitMQService = rabbitMQService;
         }
 
-        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
+        public async Task<UserDataResponse<IEnumerable<UserDTO>>> GetAllUsersAsync()
         {
             var users = await _unitOfWork.Users.GetAllAsync();
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            var userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            return userDtos.ToDataResponse();
         }
 
-        public async Task<UserDTO> GetUserByIdAsync(int id)
+        public async Task<UserDataResponse<UserDTO>> GetUserByIdAsync(int id)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(id);
-            return _mapper.Map<UserDTO>(user);
+            if (user == null)
+            {
+                return UserDataResponse<UserDTO>.Fail("User not found.");
+            }
+
+            var userDto = _mapper.Map<UserDTO>(user);
+            return userDto.ToDataResponse();
         }
 
-        public async Task<CreateUserResponse> AddUserAsync(CreateUserRequest createUserRequest)
+        public async Task<UserDataResponse<CreateUserResponse>> AddUserAsync(CreateUserRequest createUserRequest)
         {
             var user = _mapper.Map<User>(createUserRequest);
             user.CreatedAt = DateTime.UtcNow;
             user.UpdatedAt = DateTime.MinValue;
-
             user.IsActive = true;
 
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.CommitAsync();
 
-            var userDto = _mapper.Map<UserDTO>(user);
+            var response = new CreateUserResponse { Id = user.Id };
             var message = UserMessageBuilder.Create()
                                              .WithHeader("New User Registration")
-                                             .WithUserDetails(userDto)
+                                             .WithUserDetails(_mapper.Map<UserDTO>(user))
                                              .WithFooter("User registration processed successfully.")
                                              .Build();
 
             _rabbitMQService.SendMessage(message);
-
-            return new CreateUserResponse { Id = user.Id };
+            return response.ToDataResponse();
         }
 
-        public async Task<UpdateUserResponse> UpdateUserAsync(UpdateUserRequest updateUserRequest)
+        public async Task<UserDataResponse<UpdateUserResponse>> UpdateUserAsync(UpdateUserRequest updateUserRequest)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(updateUserRequest.Id);
             if (user == null)
             {
-                throw new Exception("User not found.");
+                return UserDataResponse<UpdateUserResponse>.Fail("User not found.");
             }
 
             var previousState = _mapper.Map<UserDTO>(user);
-
             _mapper.Map(updateUserRequest, user);
             user.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
 
-            var userDto = _mapper.Map<UserDTO>(user);
-
             var message = UserMessageBuilder.Create()
                                              .WithHeader("User Update")
-                                             .WithChanges(userDto, previousState)
+                                             .WithChanges(_mapper.Map<UserDTO>(user), previousState)
                                              .WithFooter("User update processed successfully.")
                                              .Build();
 
             _rabbitMQService.SendMessage(message);
-
-            return new UpdateUserResponse { Id = user.Id };
+            return new UpdateUserResponse { Id = user.Id }.ToDataResponse();
         }
 
-        public async Task<DeleteUserResponse> DeleteUserAsync(DeleteUserRequest deleteUserRequest)
+        public async Task<UserDataResponse<DeleteUserResponse>> DeleteUserAsync(DeleteUserRequest deleteUserRequest)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(deleteUserRequest.Id);
-            if (user != null)
+            if (user == null)
             {
-                await _unitOfWork.Users.DeleteAsync(user);
-                await _unitOfWork.CommitAsync();
-
-                var userDto = _mapper.Map<UserDTO>(user);
-                var message = UserMessageBuilder.Create()
-                                                 .WithHeader("User Deletion")
-                                                 .WithUserDetails(userDto)
-                                                 .WithFooter("User deletion processed successfully.")
-                                                 .Build();
-
-                _rabbitMQService.SendMessage(message);
-
-                return new DeleteUserResponse { Id = user.Id };
+                return UserDataResponse<DeleteUserResponse>.Fail("User not found.");
             }
-            else
-            {
-                throw new Exception("User not found.");
-            }
+
+            await _unitOfWork.Users.DeleteAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            var message = UserMessageBuilder.Create()
+                                             .WithHeader("User Deletion")
+                                             .WithUserDetails(_mapper.Map<UserDTO>(user))
+                                             .WithFooter("User deletion processed successfully.")
+                                             .Build();
+
+            _rabbitMQService.SendMessage(message);
+            return new DeleteUserResponse { Id = user.Id }.ToDataResponse();
         }
 
-        public async Task<IEnumerable<UserDTO>> GetUsersAddedBetweenDatesAsync(DateTime startDate, DateTime endDate)
+        public async Task<UserDataResponse<IEnumerable<UserDTO>>> GetUsersAddedBetweenDatesAsync(DateTime startDate, DateTime endDate)
         {
             var users = await _unitOfWork.Users.GetUsersAddedBetweenDatesAsync(startDate, endDate);
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            var userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            return userDtos.ToDataResponse();
         }
 
-        public async Task<int> GetActiveUserCountAsync()
+        public async Task<UserDataResponse<int>> GetActiveUserCountAsync()
         {
-            return await _unitOfWork.Users.GetActiveUserCountAsync();
+            var count = await _unitOfWork.Users.GetActiveUserCountAsync();
+            return count.ToDataResponse();
         }
 
-        public async Task<IEnumerable<UserDTO>> GetActiveUsersAsync()
+        public async Task<UserDataResponse<IEnumerable<UserDTO>>> GetActiveUsersAsync()
         {
             var users = await _unitOfWork.Users.GetActiveUsersAsync();
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            var userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            return userDtos.ToDataResponse();
         }
 
-        public async Task<IEnumerable<UserDTO>> GetInactiveUsersAsync()
+        public async Task<UserDataResponse<IEnumerable<UserDTO>>> GetInactiveUsersAsync()
         {
             var users = await _unitOfWork.Users.GetInactiveUsersAsync();
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            var userDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            return userDtos.ToDataResponse();
         }
     }
 }
