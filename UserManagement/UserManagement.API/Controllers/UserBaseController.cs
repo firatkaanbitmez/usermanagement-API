@@ -13,7 +13,11 @@ namespace UserManagement.API.Controllers
 
         protected IActionResult ApiResponse<T>(UserDataResponse<T> response)
         {
-            if (response.IsSuccessful)
+            if (response == null)
+            {
+                return StatusCode((int)HttpStatusCode.BadRequest);
+            }
+            else if (response.IsSuccessful)
             {
                 return Ok(response);
             }
@@ -22,6 +26,7 @@ namespace UserManagement.API.Controllers
                 return StatusCode((int)HttpStatusCode.BadRequest, response);
             }
         }
+
 
         protected IActionResult ApiResponse<T>(HttpStatusCode httpStatusCode, UserDataResponse<T> response)
         {

@@ -50,34 +50,36 @@ namespace UserManagement.API.Controllers
         public async Task<IActionResult> AddUser([FromBody] CreateUserRequest createUserRequest)
         {
             var response = await _userService.AddUserAsync(createUserRequest);
-            if (response == null || !response.IsSuccessful)
+            if (response == null)
             {
                 return ApiResponse(HttpStatusCode.BadRequest, new UserDataResponse<CreateUserResponse>(null, false));
             }
             return ApiResponse(HttpStatusCode.Created, new UserDataResponse<CreateUserResponse>(response, true));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest updateUserRequest)
         {
             var response = await _userService.UpdateUserAsync(updateUserRequest);
-            if (response == null || !response.IsSuccessful)
+            if (response == null)
             {
                 return ApiResponse(HttpStatusCode.BadRequest);
             }
             return ApiResponse(new UserDataResponse<UpdateUserResponse>(response, true));
         }
 
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var response = await _userService.DeleteUserAsync(new DeleteUserRequest { Id = id });
-            if (response == null || !response.IsSuccessful)
+            if (response == null)
             {
                 return ApiResponse(HttpStatusCode.BadRequest);
             }
             return ApiResponse(new UserDataResponse<DeleteUserResponse>(response, true));
         }
+
 
         [HttpGet("active-user-count")]
         public async Task<IActionResult> GetActiveUserCount()
