@@ -12,7 +12,6 @@ namespace UserManagement.Core.DTOs
         public bool IsActive { get; set; } = true;
         public string PhoneNumber { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
-        public string FullName => $"{FirstName} {LastName}";
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public UserDTO? PreviousState { get; set; }

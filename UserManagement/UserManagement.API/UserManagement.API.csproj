@@ -27,4 +27,8 @@
     <ProjectReference Include="..\UserManagement.Service\UserManagement.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middleware\" />
+  </ItemGroup>
+
 </Project>
