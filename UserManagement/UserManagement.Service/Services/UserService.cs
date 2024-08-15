@@ -48,10 +48,7 @@ namespace UserManagement.Service.Services
 
         public async Task<UserDataResponse<CreateUserResponse>> AddUserAsync(CreateUserRequest createUserRequest)
         {
-            var user = _mapper.Map<User>(createUserRequest);
-            user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.MinValue;
-            user.IsActive = true;
+            var user = _mapper.Map<User>(createUserRequest);           
 
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.CommitAsync();
@@ -77,7 +74,6 @@ namespace UserManagement.Service.Services
 
             var previousState = _mapper.Map<UserDTO>(user);
             _mapper.Map(updateUserRequest, user);
-            user.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.CommitAsync();

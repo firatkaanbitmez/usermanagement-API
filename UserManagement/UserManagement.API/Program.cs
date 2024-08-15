@@ -3,6 +3,7 @@ using UserManagement.Service;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using UserManagement.Service.Validators;
+using UserManagement.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddServices();
 builder.Services.AddSingleton<RabbitMQService>();
 
 var app = builder.Build();
+//app.UseMiddleware<RequestResponseMiddleware>(); 
 
 
 if (app.Environment.IsDevelopment())
