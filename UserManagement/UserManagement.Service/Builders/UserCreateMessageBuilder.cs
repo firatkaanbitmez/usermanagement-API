@@ -3,23 +3,23 @@ using System.Text;
 
 namespace UserManagement.Service.Builders
 {
-    public class UserDetailsBuilder
+    public class UserCreateMessageBuilder
     {
         private readonly StringBuilder _details;
         private readonly UserDTO _user;
 
-        private UserDetailsBuilder(UserDTO user)
+        private UserCreateMessageBuilder(UserDTO user)
         {
             _details = new StringBuilder();
             _user = user;
         }
 
-        public static UserDetailsBuilder Create(UserDTO user)
+        public static UserCreateMessageBuilder Create(UserDTO user)
         {
-            return new UserDetailsBuilder(user);
+            return new UserCreateMessageBuilder(user);
         }
 
-        public UserDetailsBuilder WithUserDetails()
+        public UserCreateMessageBuilder WithUserDetails()
         {
             AppendLineIfNotNull("ID          : ", _user.Id)
                 .AppendLineIfNotNull("First Name  : ", _user.FirstName)
@@ -32,7 +32,7 @@ namespace UserManagement.Service.Builders
             return this;
         }
 
-        private UserDetailsBuilder AppendLineIfNotNull(string label, object? value)
+        private UserCreateMessageBuilder AppendLineIfNotNull(string label, object? value)
         {
             if (value != null)
             {

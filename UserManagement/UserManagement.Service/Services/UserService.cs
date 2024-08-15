@@ -19,14 +19,15 @@ namespace UserManagement.Service.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly RabbitMQService _rabbitMQService;
+        private readonly IUserChangeDetector _userChangeDetector;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, RabbitMQService rabbitMQService)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, RabbitMQService rabbitMQService, IUserChangeDetector userChangeDetector)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _rabbitMQService = rabbitMQService;
+            _userChangeDetector = userChangeDetector;
         }
-
         public async Task<UserDataResponse<IEnumerable<UserDTO>>> GetAllUsersAsync()
         {
             var users = await _unitOfWork.Users.GetAllAsync();
@@ -54,7 +55,7 @@ namespace UserManagement.Service.Services
             await _unitOfWork.CommitAsync();
 
             var response = new CreateUserResponse { Id = user.Id };
-            var message = UserMessageBuilder.Create()
+            var message = MessageBuilder.Create()
                                              .WithHeader("New User Registration")
                                              .WithUserDetails(_mapper.Map<UserDTO>(user))
                                              .WithFooter("User registration processed successfully.")
@@ -72,21 +73,28 @@ namespace UserManagement.Service.Services
                 return UserDataResponse<UpdateUserResponse>.Fail("User not found.");
             }
 
+            if (!_userChangeDetector.HasChanges(updateUserRequest, user))
+            {
+                return UserDataResponse<UpdateUserResponse>.Fail("No changes detected.");
+            }
+
             var previousState = _mapper.Map<UserDTO>(user);
             _mapper.Map(updateUserRequest, user);
 
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
 
-            var message = UserMessageBuilder.Create()
-                                             .WithHeader("User Update")
-                                             .WithChanges(_mapper.Map<UserDTO>(user), previousState)
-                                             .WithFooter("User update processed successfully.")
-                                             .Build();
+            var message = MessageBuilder.Create()
+                                        .WithHeader("User Update")
+                                        .WithChanges(_mapper.Map<UserDTO>(user), previousState)
+                                        .WithFooter("User update processed successfully.")
+                                        .Build();
 
             _rabbitMQService.SendMessage(message);
+
             return new UpdateUserResponse { Id = user.Id }.ToDataResponse();
         }
+
 
         public async Task<UserDataResponse<DeleteUserResponse>> DeleteUserAsync(DeleteUserRequest deleteUserRequest)
         {
@@ -99,7 +107,7 @@ namespace UserManagement.Service.Services
             await _unitOfWork.Users.DeleteAsync(user);
             await _unitOfWork.CommitAsync();
 
-            var message = UserMessageBuilder.Create()
+            var message = MessageBuilder.Create()
                                              .WithHeader("User Deletion")
                                              .WithUserDetails(_mapper.Map<UserDTO>(user))
                                              .WithFooter("User deletion processed successfully.")

@@ -4,25 +4,25 @@ using System.Collections.Generic;
 
 namespace UserManagement.Service.Builders
 {
-    public class UserChangesBuilder
+    public class UserUpdateMessageBuilder
     {
         private readonly StringBuilder _changes;
         private readonly UserDTO _user;
         private readonly UserDTO _previousState;
 
-        private UserChangesBuilder(UserDTO user, UserDTO previousState)
+        private UserUpdateMessageBuilder(UserDTO user, UserDTO previousState)
         {
             _changes = new StringBuilder();
             _user = user;
             _previousState = previousState;
         }
 
-        public static UserChangesBuilder Create(UserDTO user, UserDTO previousState)
+        public static UserUpdateMessageBuilder Create(UserDTO user, UserDTO previousState)
         {
-            return new UserChangesBuilder(user, previousState);
+            return new UserUpdateMessageBuilder(user, previousState);
         }
 
-        public UserChangesBuilder WithChanges()
+        public UserUpdateMessageBuilder WithChanges()
         {
             var changes = new List<string>();
 
@@ -34,6 +34,7 @@ namespace UserManagement.Service.Builders
             AddChangeIfDifferent("Active      : ", _previousState.IsActive, _user.IsActive, changes);
 
             _changes.AppendLine("Changes:")
+                    .AppendLine($"ID: {_user.Id}")
                     .AppendLine(string.Join("\n      ", changes))
                     .AppendLine($"Updated Date: {_user.UpdatedAt:dd-MM-yyyy HH:mm:ss}");
 

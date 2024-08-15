@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UserManagement.Core.Responses;
+﻿    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using UserManagement.Core.Responses;
 
-namespace UserManagement.Core.Extensions
-{
-    public static class DataResponseExtensions
+    namespace UserManagement.Core.Extensions
     {
-        public static UserDataResponse<T> ToDataResponse<T>(this T data, bool isSuccessful = true, List<string>? errors = null)
+        public static class DataResponseExtensions
         {
-            return new UserDataResponse<T>(data, isSuccessful, errors);
-        }
+            public static UserDataResponse<T> ToDataResponse<T>(this T data, bool isSuccessful = true, List<string>? errors = null)
+            {
+                return new UserDataResponse<T>(data, isSuccessful, errors);
+            }
 
-        public static UserDataResponse<T> Fail<T>(this string errorMessage, List<string>? errors = null)
-        {
-            return new UserDataResponse<T>(default, false, errors, errorMessage);
+            public static UserDataResponse<T> Fail<T>(this string errorMessage, List<string>? errors = null)
+            {
+                return new UserDataResponse<T>(default, false, errors, errorMessage);
+            }
         }
     }
-}

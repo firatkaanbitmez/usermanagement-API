@@ -3,7 +3,8 @@ using UserManagement.Service;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using UserManagement.Service.Validators;
-//using UserManagement.API.Middleware;
+using UserManagement.Core.Interfaces;
+using UserManagement.Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +20,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddRepositories(connectionString);
 builder.Services.AddServices();
 builder.Services.AddSingleton<RabbitMQService>();
-
+builder.Services.AddScoped<IUserChangeDetector, UserChangeDetector>();
+builder.Services.AddScoped<IUserService, UserService>();
 var app = builder.Build();
-//app.UseMiddleware<MiddlewareName>(); 
 
 
 if (app.Environment.IsDevelopment())

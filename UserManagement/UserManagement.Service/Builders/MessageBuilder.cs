@@ -3,46 +3,46 @@ using System.Text;
 
 namespace UserManagement.Service.Builders
 {
-    public class UserMessageBuilder
+    public class MessageBuilder
     {
         private readonly StringBuilder _message;
 
-        private UserMessageBuilder()
+        private MessageBuilder()
         {
             _message = new StringBuilder();
         }
 
-        public static UserMessageBuilder Create()
+        public static MessageBuilder Create()
         {
-            return new UserMessageBuilder();
+            return new MessageBuilder();
         }
 
-        public UserMessageBuilder WithHeader(string header)
+        public MessageBuilder WithHeader(string header)
         {
             _message.AppendLine($"{header}")
                     .AppendLine(new string('-', 50));
             return this;
         }
 
-        public UserMessageBuilder WithFooter(string footer)
+        public MessageBuilder WithFooter(string footer)
         {
             _message.AppendLine(new string('-', 50))
                     .AppendLine(footer);
             return this;
         }
 
-        public UserMessageBuilder WithUserDetails(UserDTO user)
+        public MessageBuilder WithUserDetails(UserDTO user)
         {
-            var userDetails = UserDetailsBuilder.Create(user)
+            var userDetails = UserCreateMessageBuilder.Create(user)
                                                 .WithUserDetails()
                                                 .Build();
             _message.AppendLine(userDetails);
             return this;
         }
 
-        public UserMessageBuilder WithChanges(UserDTO user, UserDTO previousState)
+        public MessageBuilder WithChanges(UserDTO user, UserDTO previousState)
         {
-            var userChanges = UserChangesBuilder.Create(user, previousState)
+            var userChanges = UserUpdateMessageBuilder.Create(user, previousState)
                                                 .WithChanges()
                                                 .Build();
             _message.AppendLine(userChanges);
