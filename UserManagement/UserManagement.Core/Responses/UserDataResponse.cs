@@ -22,14 +22,21 @@ namespace UserManagement.Core.Responses
             ErrorMessage = errorMessage;
         }
 
+        public bool HasErrorMessage() => !string.IsNullOrEmpty(ErrorMessage);
+
+        public void AddErrorMessageToList(List<string> errors)
+        {
+            if (HasErrorMessage() && ErrorMessage != null)  // Null kontrolü eklenmiş hali
+            {
+                errors.Add(ErrorMessage);
+            }
+        }
+
+        // Fail metodu tanımlama
         public static UserDataResponse<T> Fail(string errorMessage, List<string>? errors = null)
         {
             return new UserDataResponse<T>(default, false, errors, errorMessage);
         }
     }
-
-
-
-
 
 }

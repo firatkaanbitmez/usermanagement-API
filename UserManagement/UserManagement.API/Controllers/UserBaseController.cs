@@ -17,24 +17,23 @@ namespace UserManagement.API.Controllers
             {
                 return StatusCode((int)HttpStatusCode.BadRequest);
             }
-            else if (response.IsSuccessful)
+            else if (!response.IsSuccessful)
             {
-                return Ok(response);
+                var errors = new List<string>();
+                response.AddErrorMessageToList(errors);
+                return StatusCode((int)HttpStatusCode.BadRequest, new UserDataResponse<T>(default, false, errors));
             }
             else
             {
-                return StatusCode((int)HttpStatusCode.BadRequest, response);
+                return Ok(response);
             }
         }
 
         protected IActionResult ApiResponse<T>(HttpStatusCode httpStatusCode, UserDataResponse<T> response)
         {
-            if (!response.IsSuccessful)
-            {
-                return StatusCode((int)httpStatusCode, response);
-            }
-
-            return StatusCode((int)httpStatusCode, response);
+            var errors = new List<string>();
+            response.AddErrorMessageToList(errors);
+            return StatusCode((int)httpStatusCode, new UserDataResponse<T>(response.Data, response.IsSuccessful, errors));
         }
 
 
